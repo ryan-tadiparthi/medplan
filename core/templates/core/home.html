@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    MedPlan
+    Home
 {% endblock %}
 
 {% block extra_css %}
@@ -48,7 +48,7 @@
       <ul class="nav-links" id="navLinks">
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="#">Features</a></li>
-        <li><a href="#">Security</a></li>
+        <li><a href="{% url 'upload_prescription' %}">Security</a></li>
         <li><a href="#" class="nav-cta">Get Started Free</a></li>
       </ul>
     </div>

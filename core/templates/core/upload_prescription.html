@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+    Upload Prescription
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/upload_prescription.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Upload Prescription</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Upload</button>
+
+    </form>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'core/js/upload_prescription.js' %}"></script>
+{% endblock %}
