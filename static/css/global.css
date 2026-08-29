@@ -1,0 +1,12 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+nav {
+    padding: 20px;
+}
+
+button {
+    border-radius: 8px;
+}

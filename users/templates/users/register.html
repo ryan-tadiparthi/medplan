@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+    MedPlan
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/register.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Create Account</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'core/js/register.js' %}"></script>
+{% endblock %}
