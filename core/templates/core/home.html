@@ -27,8 +27,8 @@
         </select>
       </div>
       <div class="top-actions">
-        <a href="login" class="login-link">Log in</a>
-        <a href="signup" class="signup-pill">Sign Up</a>
+        <a href="{% url 'login' %}" class="login-link">Log in</a>
+        <a href="{% url 'register' %}" class="signup-pill">Sign Up</a>
       </div>
     </div>
   </div>
@@ -36,9 +36,9 @@
   <!-- Nav -->
   <nav>
     <div class="wrap nav-content">
-      <a href="home" class="logo">
+      <a href="{% url 'home' %}" class="logo">
         <span class="logo-mark"><i class="fa-solid fa-file-medical"></i></span>
-        <span class="logo-word">Med<span>Folio</span></span>
+        <span class="logo-word">Med<span>Plan</span></span>
       </a>
 
       <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
@@ -46,10 +46,10 @@
       </button>
 
       <ul class="nav-links" id="navLinks">
-        <li><a href="home">Home</a></li>
-        <li><a href="features">Features</a></li>
-        <li><a href="security">Security</a></li>
-        <li><a href="signup" class="nav-cta">Get Started Free</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#" class="nav-cta">Get Started Free</a></li>
       </ul>
     </div>
   </nav>
@@ -325,11 +325,6 @@
       </div>
     </div>
   </footer>
-
-
-
-    <a href="{% url 'login' %}" id="home_links" class="btn btn-danger btn active">Login</a>
-    <a href="{% url 'register' %}" id="home_links" class="btn btn-dark btn active">Register</a>
 {% endblock %}
 
 {% block extra_js %}
