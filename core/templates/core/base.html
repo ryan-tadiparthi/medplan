@@ -1,49 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  {% load static %}
 
-    <!-- {% load static %} -->
-        <!-- <link rel="stylesheet" href="{% static 'css/global.css' %}"> -->
-    
-    <title>
-        {% block title %}
-            MedPlan
-        {% endblock %}
-    </title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="{% static 'css/global.css' %}">
+  <link rel="stylesheet" href="{% static 'css/global.css' %}">
 
+  <title>{% block title %}MedPlan{% endblock %}</title>
 
-{% block extra_css %}
-    {% endblock %}
+  {% block extra_css %}{% endblock %}
+</head>
 <body>
 
   <div class="top-bar">
     <div class="wrap">
       <div class="lang-select">
         <i class="fa-solid fa-globe"></i>
-        <select aria-label="Select language">
-          <option>English</option>
-          <option>Español</option>
-          <option>Français</option>
-          <option>Deutsch</option>
-          <option>中文</option>
-          <option>हिन्दी</option>
+        <select id="customLanguageSelect">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="ne">नेपाली</option>
+          <option value="fr">Français</option>
         </select>
       </div>
+
       <div class="top-actions">
         <a href="{% url 'login' %}" class="login-link">Log in</a>
         <a href="{% url 'register' %}" class="signup-pill">Sign Up</a>
       </div>
     </div>
   </div>
+
+  <!-- Hidden container for Google Translate engine -->
+  <div id="google_translate_element" style="display: none;"></div>
 
   <nav>
     <div class="wrap nav-content">
@@ -64,7 +60,6 @@
       </ul>
     </div>
   </nav>
-
   
 
 

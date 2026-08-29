@@ -1,6 +1,7 @@
 :root {
   --purple: #6C5CE7;
   --purple-dark: #5546c8;
+  --purple-deep: #4a3ba8;
   --blue: #4FACFE;
   --blue-light: #8fd6ff;
   --ink: #171A2E;
@@ -21,12 +22,27 @@
   box-sizing: border-box;
 }
 
+/* Hide Google Translate's injected banner, tooltips, and default widgets */
+.goog-te-banner-frame,
+.skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+  position: static !important;
+  top: 0 !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: #f8f9fc;
   color: var(--ink);
   overflow-x: hidden;
@@ -48,17 +64,20 @@ a {
 
 /* ---------- Top Utility Bar ---------- */
 .top-bar {
-  background: var(--ink);
-  color: #D8DAF0;
+  background: linear-gradient(90deg, var(--purple-deep) 0%, var(--purple) 100%);
+  color: #EDEBFC;
   font-size: 13.5px;
+  position: relative;
+  z-index: 101;
 }
 
 .top-bar .wrap {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  min-height: 40px;
+  padding-top: 9px;
+  padding-bottom: 9px;
   gap: 16px;
 }
 
@@ -66,33 +85,43 @@ a {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  padding: 5px 14px 5px 12px;
+  padding: 5px 26px 5px 12px;
   position: relative;
+  line-height: 1.4;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.lang-select:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.32);
 }
 
 .lang-select i {
   color: var(--blue-light);
   font-size: 13px;
+  flex-shrink: 0;
 }
 
 .lang-select select {
   background: transparent;
   border: none;
-  color: #D8DAF0;
+  color: #fff;
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  padding-right: 14px;
+  padding-right: 4px;
+  max-width: 100px;
 }
 
 .lang-select select option {
   color: #171A2E;
+  background: #fff;
 }
 
 .lang-select::after {
@@ -100,43 +129,50 @@ a {
   font-family: 'Font Awesome 6 Free';
   font-weight: 900;
   font-size: 10px;
-  color: #9CA0C4;
+  color: #D8CCFB;
   position: absolute;
   right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
 .top-actions {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
 }
 
 .login-link {
   font-weight: 600;
-  color: #D8DAF0;
-  transition: color 0.25s;
+  color: #EDEBFC;
   white-space: nowrap;
+  padding: 6px 4px;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
 }
 
 .login-link:hover {
   color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
 .signup-pill {
-  background: var(--gradient);
-  color: #fff;
+  background: #fff;
+  color: var(--purple-dark);
   padding: 8px 20px;
   border-radius: 20px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.4);
-  transition: transform 0.25s, box-shadow 0.25s;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .signup-pill:hover {
+  background: #F3F0FF;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.55);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ---------- Nav ---------- */
@@ -159,30 +195,27 @@ nav {
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 24px;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
   font-weight: 700;
   color: var(--ink);
 }
 
-.logo-icon {
-  width: 70px;
-  height: 70px;
-  border-radius: 8px;
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--gradient);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 15px;
   flex-shrink: 0;
 }
 
-.logo-icon img {
-  max-width: 75%;
-  max-height: 75%;
-  object-fit: contain;
-  display: block;
-}
-
-.logo-text span {
+.logo-word span {
   background: var(--gradient);
   -webkit-background-clip: text;
   background-clip: text;
@@ -209,16 +242,17 @@ nav {
 
 .nav-links {
   display: flex;
-  gap: 34px;
+  gap: 32px;
   align-items: center;
   list-style: none;
 }
 
 .nav-links a {
+  font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 15px;
   color: #3B3F5C;
-  transition: color 0.25s;
+  transition: color 0.2s;
 }
 
 .nav-links a:hover {
@@ -227,19 +261,19 @@ nav {
 
 .nav-cta {
   background: var(--gradient);
-  color: #fff;
-  padding: 11px 26px;
+  color: #fff !important;
+  padding: 10px 24px;
   border-radius: 24px;
   font-weight: 600;
   font-size: 14.5px;
-  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.35);
-  transition: transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 6px 18px rgba(108, 92, 231, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
 }
 
 .nav-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(108, 92, 231, 0.5);
+  box-shadow: 0 10px 22px rgba(108, 92, 231, 0.45);
 }
 
 /* ---------- Footer ---------- */
@@ -367,8 +401,8 @@ nav {
 @media (max-width: 768px) {
   .top-bar .wrap {
     flex-direction: column;
-    gap: 12px;
-    padding: 12px 20px;
+    gap: 10px;
+    padding: 10px 20px;
   }
 
   .menu-toggle {
