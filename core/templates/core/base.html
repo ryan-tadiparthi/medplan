@@ -65,8 +65,12 @@
     </div>
   </nav>
 
-  {% block content %}{% endblock %}
+  
 
+
+        {% block content %}
+        {% endblock %}
+    
   <footer class="footer-section">
     <div class="wrap">
       <div class="footer-content">
@@ -119,11 +123,7 @@
       </div>
     </div>
   </footer>
-			{% endfor %}
-		{% endif %}
-
-        {% block content %}
-        {% endblock %}
+		
 
     {% block extra_js %}
     {% endblock %}
