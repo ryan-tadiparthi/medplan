@@ -129,52 +129,166 @@
         <p>Add a photo of your prescription and details about your symptoms and medications so your record is complete and easy for your doctor to read.</p>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" id="prescriptionForm" novalidate>
-        {% csrf_token %}
+    
+<form method="POST" enctype="multipart/form-data" id="prescriptionForm" novalidate>
 
-        <!-- Interactive photo upload -->
-        <div class="field-block">
-            <label class="field-label" for="photoInput">Prescription photo</label>
-            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload a prescription photo">
-                <div class="dropzone-empty" id="dropzoneEmpty">
-                    <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                        <path d="M4 8.5a2 2 0 0 1 2-2h1.2l.8-1.5a1.5 1.5 0 0 1 1.3-.8h5.4a1.5 1.5 0 0 1 1.3.8l.8 1.5H18a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8.5Z"/>
-                        <circle cx="12" cy="12.5" r="3.4"/>
-                    </svg>
-                    <p class="dz-text"><strong>Tap or drag a photo here</strong></p>
-                    <span class="dz-hint">JPG or PNG, up to 10MB</span>
-                </div>
-                <div class="dropzone-preview" id="dropzonePreview" hidden>
-                    <img id="previewImg" alt="Preview of your uploaded prescription">
-                    <div class="preview-meta">
-                        <span id="fileName"></span>
-                        <span id="fileSize"></span>
-                    </div>
-                    <button type="button" class="btn-remove" id="removePhoto">Remove photo</button>
-                </div>
+    {% csrf_token %}
+
+    <!-- Interactive photo upload -->
+
+    <div class="field-block">
+
+        <label class="field-label" for="photoInput">
+            Prescription photo
+        </label>
+
+        <div
+            class="dropzone"
+            id="dropzone"
+            tabindex="0"
+            role="button"
+            aria-label="Upload a prescription photo"
+        >
+
+            <div class="dropzone-empty" id="dropzoneEmpty">
+
+                <svg
+                    class="dz-icon"
+                    width="40"
+                    height="40"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                >
+                    <path d="M4 8.5a2 2 0 0 1 2-2h1.2l.8-1.5a1.5 1.5 0 0 1 1.3-.8h5.4a1.5 1.5 0 0 1 1.3.8l.8 1.5H18a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8.5Z"/>
+                    <circle cx="12" cy="12.5" r="3.4"/>
+                </svg>
+
+                <p class="dz-text">
+                    <strong>Tap or drag a photo here</strong>
+                </p>
+
+                <span class="dz-hint">
+                    JPG or PNG, up to 10MB
+                </span>
+
             </div>
-            <input type="file" name="photo" id="photoInput" accept="image/png, image/jpeg" hidden>
-            <p class="field-error" id="photoError" hidden>Please choose a JPG or PNG under 10MB.</p>
+
+            <div class="dropzone-preview" id="dropzonePreview" hidden>
+
+                <img
+                    id="previewImg"
+                    alt="Preview of your uploaded prescription"
+                >
+
+                <div class="preview-meta">
+                    <span id="fileName"></span>
+                    <span id="fileSize"></span>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-remove"
+                    id="removePhoto"
+                >
+                    Remove photo
+                </button>
+
+            </div>
+
         </div>
 
-        <!-- Interactive description analyzer -->
-        <div class="field-block">
-            <label class="field-label" for="descriptionInput">Describe your symptoms</label>
-            <textarea name="description" id="descriptionInput" rows="5" placeholder="e.g. I've had a dry cough and mild fever for 3 days, worse at night..."></textarea>
-            <div class="analyzer" id="analyzer">
-                <div class="analyzer-top">
-                    <div class="clarity-ring" id="clarityRing" style="--pct:0;">
-                        <span id="clarityPct">0%</span>
-                    </div>
-                    <div class="clarity-info">
-                        <span class="clarity-label" id="clarityLabel">Start typing to see feedback</span>
-                        <span class="word-count"><span id="wordCount">0</span> words</span>
-                    </div>
+        <!--
+            IMPORTANT:
+            Django PrescriptionForm expects the field name "image".
+            The id remains "photoInput" so your existing JavaScript
+            continues to work.
+        -->
+
+        <input
+            type="file"
+            name="image"
+            id="photoInput"
+            accept="image/png, image/jpeg"
+            hidden
+        >
+
+        <p
+            class="field-error"
+            id="photoError"
+            hidden
+        >
+            Please choose a JPG or PNG under 10MB.
+        </p>
+
+    </div>
+
+
+    <!-- Interactive description analyzer -->
+
+    <div class="field-block">
+
+        <label
+            class="field-label"
+            for="descriptionInput"
+        >
+            Describe your symptoms
+        </label>
+
+        <textarea
+            name="description"
+            id="descriptionInput"
+            rows="5"
+            placeholder="e.g. I've had a dry cough and mild fever for 3 days, worse at night..."
+        ></textarea>
+
+        <div
+            class="analyzer"
+            id="analyzer"
+        >
+
+            <div class="analyzer-top">
+
+                <div
+                    class="clarity-ring"
+                    id="clarityRing"
+                    style="--pct:0;"
+                >
+                    <span id="clarityPct">0%</span>
                 </div>
-                <div class="analyzer-chips" id="analyzerChips"></div>
-                <ul class="analyzer-tips" id="analyzerTips"></ul>
+
+                <div class="clarity-info">
+
+                    <span
+                        class="clarity-label"
+                        id="clarityLabel"
+                    >
+                        Start typing to see feedback
+                    </span>
+
+                    <span class="word-count">
+                        <span id="wordCount">0</span> words
+                    </span>
+
+                </div>
+
             </div>
+
+            <div
+                class="analyzer-chips"
+                id="analyzerChips"
+            ></div>
+
+            <ul
+                class="analyzer-tips"
+                id="analyzerTips"
+            ></ul>
+
         </div>
+
+    </div>
+
 
         <!-- Medication search -->
         <div class="field-block">
