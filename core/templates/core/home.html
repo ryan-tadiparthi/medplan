@@ -12,48 +12,6 @@
 {% block content %}
 
 
-  <!-- Top Utility Bar: language + auth -->
-  <div class="top-bar">
-    <div class="wrap">
-      <div class="lang-select">
-        <i class="fa-solid fa-globe"></i>
-        <select aria-label="Select language">
-          <option>English</option>
-          <option>Español</option>
-          <option>Français</option>
-          <option>Deutsch</option>
-          <option>中文</option>
-          <option>हिन्दी</option>
-        </select>
-      </div>
-      <div class="top-actions">
-        <a href="{% url 'login' %}" class="login-link">Log in</a>
-        <a href="{% url 'register' %}" class="signup-pill">Sign Up</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Nav -->
-  <nav>
-    <div class="wrap nav-content">
-      <a href="{% url 'home' %}" class="logo">
-        <span class="logo-mark"><i class="fa-solid fa-file-medical"></i></span>
-        <span class="logo-word">Med<span>Plan</span></span>
-      </a>
-
-      <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
-        <span></span><span></span><span></span>
-      </button>
-
-      <ul class="nav-links" id="navLinks">
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="#">Features</a></li>
-        <li><a href="{% url 'upload_prescription' %}">Security</a></li>
-        <li><a href="#" class="nav-cta">Get Started Free</a></li>
-      </ul>
-    </div>
-  </nav>
-
   <!-- Hero -->
   <section class="hero" id="home">
     <div class="wrap">
@@ -272,59 +230,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="footer-section">
-    <div class="wrap">
-      <div class="footer-content">
-        <div class="footer-col about-col">
-          <div class="footer-logo">
-            <span class="logo-mark"><i class="fa-solid fa-file-medical"></i></span>
-            <span>MedPlan</span>
-          </div>
-          <p>MedPlan helps individuals and families organize, secure, and share their medical history — from records and labs to medications and appointments — all in one trusted place.</p>
-          <div class="footer-social">
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h3>Product</h3>
-          <a href="features" class="flink">Features</a>
-          <a href="security" class="flink">Security</a>
-          <a href="Pricing" class="flink">Pricing</a>
-          <a href="Mobile" class="flink">Mobile App</a>
-        </div>
-
-        <div class="footer-col">
-          <h3>Company</h3>
-          <a href="About" class="flink">About Us</a>
-          <a href="Career" class="flink">Careers</a>
-          <a href="Blog" class="flink">Blog</a>
-          <a href="Contact" class="flink">Contact</a>
-        </div>
-
-        <div class="footer-col">
-          <h3>Support</h3>
-          <a href="Help" class="flink">Help Center</a>
-          <a href="Privacy" class="flink">Privacy Policy</a>
-          <a href="Terms" class="flink">Terms of Service</a>
-          <a href="Notice" class="flink">HIPAA Notice</a>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <span>&copy; 2026 MedPlan.</span>
-        <div class="legal-links">
-          <a href="privacy">Privacy Policy</a>
-          <a href="terms">Terms and Conditions</a>
-          <a href="sitemap">Sitemap</a>
-        </div>
-      </div>
-    </div>
-  </footer>
 {% endblock %}
 
 {% block extra_js %}
