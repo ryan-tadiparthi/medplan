@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'core/css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/register.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -31,52 +31,90 @@
                     <p class="subtitle">Join medplan today</p>
                 </div>
 
-                <form id="signupForm">
+                <form method="POST" action="{% url 'register' %}">
+                    {% csrf_token %}
+                
                     <div class="form-group">
-                        <label for="signupName">Full name</label>
-                        <input type="text" id="signupName" placeholder="John Doe" required>
-                        <div class="error" id="signupNameError"></div>
+                        <label for="{{ form.username.id_for_label }}">Username</label>
+                
+                        <input
+                            type="text"
+                            name="username"
+                            id="{{ form.username.id_for_label }}"
+                            placeholder="Choose a username"
+                            required
+                        >
+                
+                        {% if form.username.errors %}
+                            <div class="error">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-
+                
+                
                     <div class="form-group">
-                        <label for="signupEmail">Email</label>
-                        <input type="email" id="signupEmail" placeholder="you@gmail.com" required>
-                        <div class="error" id="signupEmailError"></div>
+                        <label for="{{ form.password1.id_for_label }}">Password</label>
+                
+                        <input
+                            type="password"
+                            name="password1"
+                            id="{{ form.password1.id_for_label }}"
+                            placeholder="Create a password"
+                            required
+                        >
+                
+                        {% if form.password1.errors %}
+                            <div class="error">
+                                {{ form.password1.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-
+                
+                
                     <div class="form-group">
-                        <label for="signupPassword">Password</label>
-                        <input type="password" id="signupPassword" placeholder="Create a password" required>
-                        <div class="error" id="signupPasswordError"></div>
+                        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+                
+                        <input
+                            type="password"
+                            name="password2"
+                            id="{{ form.password2.id_for_label }}"
+                            placeholder="Re-enter your password"
+                            required
+                        >
+                
+                        {% if form.password2.errors %}
+                            <div class="error">
+                                {{ form.password2.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-
-                    <div class="form-group">
-                        <label for="signupConfirmPassword">Confirm password</label>
-                        <input type="password" id="signupConfirmPassword" placeholder="Re-enter your password" required>
-                        <div class="error" id="signupConfirmPasswordError"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Select guardians</label>
-                        <div class="multi-select" id="multiSelect" onclick="toggleDropdown(event)">
-    <span class="multi-select-text" id="selectedGuardians">Choose guardians...</span>
-</div>
-                        <div class="dropdown-list" id="dropdownList">
-                            <div class="dropdown-item" data-value="parent" onclick="toggleGuardian(event)">Parent</div>
-                            <div class="dropdown-item" data-value="spouse" onclick="toggleGuardian(event)">Spouse</div>
-                            <div class="dropdown-item" data-value="sibling" onclick="toggleGuardian(event)">Sibling</div>
-                            <div class="dropdown-item" data-value="doctor" onclick="toggleGuardian(event)">Healthcare Provider</div>
-                            <div class="dropdown-item" data-value="caregiver" onclick="toggleGuardian(event)">Caregiver</div>
+                
+                
+                    {% if form.non_field_errors %}
+                        <div class="error">
+                            {{ form.non_field_errors }}
                         </div>
-                        <div class="error" id="guardiansError"></div>
-                    </div>
-
-                    <button type="button" class="btn btn-primary" onclick="handleSignup()">Create account</button>
-                    <a href="login.html" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center;">Back to login</a>
-
+                    {% endif %}
+                
+                
+                    <button type="submit" class="btn btn-primary">
+                        Create account
+                    </button>
+                
+                
+                    <a href="{% url 'login' %}"
+                       class="btn btn-secondary"
+                       style="display: flex; align-items: center; justify-content: center;">
+                        Back to login
+                    </a>
+                
+                
                     <div class="toggle-auth">
-                        Already have an account? <a href="login.html">Sign in</a>
+                        Already have an account?
+                        <a href="{% url 'login' %}">Sign in</a>
                     </div>
+                
                 </form>
             </div>
         </div>
@@ -86,5 +124,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'core/js/register.js' %}"></script>
+    <script src="{% static 'users/js/register.js' %}"></script>
 {% endblock %}

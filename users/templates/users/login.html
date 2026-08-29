@@ -32,24 +32,50 @@
                     <p class="subtitle">Sign in to your account</p>
                 </div>
  
-                <form id="loginForm">
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                
                     <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="you@example.com" required>
-                        <div class="error" id="loginEmailError"></div>
+                        <label for="{{ form.username.id_for_label }}">Username</label>
+                        {{ form.username }}
+                
+                        {% if form.username.errors %}
+                            <div class="error">
+                                {{ form.username.errors }}
+                            </div>
+                        {% endif %}
                     </div>
- 
+                
                     <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                        <div class="error" id="loginPasswordError"></div>
+                        <label for="{{ form.password.id_for_label }}">Password</label>
+                        {{ form.password }}
+                
+                        {% if form.password.errors %}
+                            <div class="error">
+                                {{ form.password.errors }}
+                            </div>
+                        {% endif %}
                     </div>
- 
-                    <button type="button" class="btn btn-primary" onclick="handleLogin()">Sign in</button>
-                    <a href="signup.html" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center;">Create account</a>
- 
+                
+                    {% if form.non_field_errors %}
+                        <div class="error">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                
+                    <button type="submit" class="btn btn-primary">
+                        Sign in
+                    </button>
+                
+                    <a href="{% url 'register' %}"
+                       class="btn btn-secondary"
+                       style="display: flex; align-items: center; justify-content: center;">
+                        Create account
+                    </a>
+                
                     <div class="toggle-auth">
-                        Don't have an account? <a href="signup.html">Sign up</a>
+                        Don't have an account?
+                        <a href="{% url 'register' %}">Sign up</a>
                     </div>
                 </form>
             </div>
@@ -60,5 +86,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'core/js/login.js' %}"></script>
+    <script src="{% static 'users/js/login.js' %}"></script>
 {% endblock %}
