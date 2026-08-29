@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Upload Prescription
+    My Prescriptions
 {% endblock %}
 
 {% block extra_css %}
@@ -10,27 +10,102 @@
 {% endblock %}
 
 {% block content %}
-    <h1>My Prescriptions</h1>
+    <div class="container">
 
-    {% for prescription in prescriptions %}
+        <h1>My Prescriptions</h1>
 
-        <div>
-            <img src="{{ prescription.image.url }}" width="300">
+        {% if prescriptions %}
 
-            <h3>Extracted Text</h3>
+            {% for prescription in prescriptions %}
 
-            <p>
-                {{ prescription.extracted_text|linebreaks }}
-            </p>
-        </div>
+                <div class="prescription-card">
 
-        <hr>
+                    <div class="prescription-header">
+                        <div>
+                            <h2>Prescription</h2>
+                            <p>
+                                Uploaded {{ prescription.uploaded_at|date:"d M Y, h:i A" }}
+                            </p>
+                        </div>
+                    </div>
 
-    {% empty %}
+                    {% if prescription.image %}
+                        <img
+                            src="{{ prescription.image.url }}"
+                            alt="Prescription"
+                            class="prescription-image"
+                        >
+                    {% endif %}
 
-        <p>You haven't uploaded any prescriptions yet.</p>
+                    <div class="medications">
 
-    {% endfor %}
+                        <h3>Medications</h3>
+
+                        {% for medication in prescription.medications.all %}
+
+                            <div class="medication-card">
+
+                                <h4>
+                                    {{ medication.name }}
+                                    {% if medication.strength %}
+                                        {{ medication.strength }}
+                                    {% endif %}
+                                </h4>
+
+                                <div class="medication-details">
+
+                                    {% if medication.dosage %}
+                                        <p>
+                                            <strong>Dosage:</strong>
+                                            {{ medication.dosage }}
+                                        </p>
+                                    {% endif %}
+
+                                    {% if medication.frequency %}
+                                        <p>
+                                            <strong>Frequency:</strong>
+                                            {{ medication.frequency }}
+                                        </p>
+                                    {% endif %}
+
+                                    {% if medication.timing %}
+                                        <p>
+                                            <strong>Timing:</strong>
+                                            {{ medication.timing }}
+                                        </p>
+                                    {% endif %}
+
+                                    {% if medication.instructions %}
+                                        <p>
+                                            <strong>Instructions:</strong>
+                                            {{ medication.instructions }}
+                                        </p>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <p>No medications were detected for this prescription.</p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>You haven't uploaded any prescriptions yet.</p>
+
+        {% endif %}
+
+    </div>
+
 {% endblock %}
 
 {% block extra_js %}

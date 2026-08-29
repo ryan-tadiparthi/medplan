@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import PrescriptionForm
-from .models import Prescription
+from .models import Prescription, Medication
 from django.contrib.auth.decorators import login_required
 import os
 import requests
 from dotenv import load_dotenv
+from .services.prescription_analyzer import analyze_prescription
 
 load_dotenv()
 
@@ -45,10 +46,33 @@ def upload_prescription(request):
                 result = response.json()
 
                 if not result.get('IsErroredOnProcessing'):
-                    prescription.extracted_text = (
+                    extracted_text = (
                         result['ParsedResults'][0]['ParsedText']
                     )
+
+                    prescription.extracted_text = extracted_text
                     prescription.save()
+
+                    try:
+                        analysis = analyze_prescription(extracted_text)
+
+                        print("ANALYSIS:", analysis)
+
+                        for medication in analysis.get('medications', []):
+                            print("CREATING MEDICATION:", medication)
+                            Medication.objects.create(
+                                prescription=prescription,
+                                name=medication.get('name', ''),
+                                strength=medication.get('strength', ''),
+                                dosage=medication.get('dosage', ''),
+                                frequency=medication.get('frequency', ''),
+                                timing=medication.get('timing', ''),
+                                instructions=medication.get('instructions', '')
+                            )
+
+                    except Exception as e:
+                        print("Prescription analysis failed:", e)
+                        raise
 
             except Exception as e:
                 print("OCR failed:", e)
@@ -65,6 +89,6 @@ def upload_prescription(request):
 def my_prescriptions(request):
     prescriptions = Prescription.objects.filter(
         user=request.user
-    ).order_by('-id')
+    ).prefetch_related('medications').order_by('-uploaded_at')
 
     return render(request, 'core/my_prescriptions.html', {'prescriptions': prescriptions})

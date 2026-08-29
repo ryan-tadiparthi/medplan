@@ -23,6 +23,7 @@ Return ONLY valid JSON in exactly this format:
     "medications": [
         {{
             "name": "",
+            "strength": "",
             "dosage": "",
             "frequency": "",
             "timing": "",
@@ -32,11 +33,12 @@ Return ONLY valid JSON in exactly this format:
 }}
 
 Important rules:
-- Do not invent information.
-- If a field is not present or cannot be determined, use an empty string.
-- Preserve medication names as accurately as possible.
-- Interpret common prescription abbreviations such as OD, BD, TDS, QID, and SOS when the meaning is clear.
-- If the OCR text is unclear, do not guess.
+- "name" must contain ONLY the medication name. Do not include "Tab", "Tablet", "Cap", etc.
+- "strength" is the medication strength, such as 500 mg, 650 mg, 10 mg, or 5 mL.
+- "dosage" describes how much is taken per dose, such as 1 tablet or 5 mL.
+- "frequency" describes how often it is taken, such as once daily, twice daily, three times daily, or as needed.
+- "timing" describes when it should be taken, such as before food, after food, morning, or night.
+- "instructions" contains additional directions that don't belong in the other fields.
 """
 
     interaction = client.interactions.create(
@@ -44,7 +46,11 @@ Important rules:
         input=prompt
     )
 
-    print("GEMINI OUTPUT:")
-    print(interaction.output_text)
+    response_text = interaction.output_text.strip()
 
-    return interaction.output_text
+    if response_text.startswith("```"):
+        response_text = response_text.replace("```json", "")
+        response_text = response_text.replace("```", "")
+        response_text = response_text.strip()
+
+    return json.loads(response_text)
