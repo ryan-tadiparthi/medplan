@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var APIs = {
         CONDITION: 'https://clinicaltables.nlm.nih.gov/api/conditions/v3/search',
         ICD10: 'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search',
-        RXNORM: 'https://rxnav.nlm.nih.gov/REST/drugs.json'
+        RXTERMS: 'https://clinicaltables.nlm.nih.gov/api/rxterms/v3/search'
     };
 
     var searchCache = {};
@@ -189,50 +189,56 @@ document.addEventListener('DOMContentLoaded', function () {
      * Search RxNorm for drug names
      */
     function searchDrugs(term) {
-        return new Promise(function (resolve) {
-            if (!term || term.length < 2) {
-                resolve([]);
-                return;
-            }
-
-            var now = Date.now();
-            var cacheKey = 'drug_' + term.toLowerCase();
-            
-            // Check cache
-            if (searchCache[cacheKey] && (now - searchCache[cacheKey].timestamp) < cacheExpiry) {
-                resolve(searchCache[cacheKey].results);
-                return;
-            }
-
-            var url = APIs.RXNORM + '?name=' + encodeURIComponent(term);
-            fetch(url)
-                .then(function (response) {
-                    if (!response.ok) throw new Error('RxNorm API error');
-                    return response.json();
-                })
-                .then(function (data) {
-                    var results = [];
-                    
-                    // RxNorm returns: { drugGroup: { conceptGroup: [ { conceptProperties: [ { name, rxcui }, ... ] } ] } }
-                    if (data && data.drugGroup && data.drugGroup.conceptGroup) {
-                        data.drugGroup.conceptGroup.forEach(function (group) {
-                            if (group.conceptProperties) {
-                                group.conceptProperties.slice(0, 3).forEach(function (drug) {
-                                    if (drug.name) results.push(drug.name);
-                                });
-                            }
-                        });
-                    }
-                    
-                    searchCache[cacheKey] = { results: results.slice(0, 5), timestamp: now };
-                    resolve(searchCache[cacheKey].results);
-                })
-                .catch(function (err) {
-                    console.error('RxNorm error:', err);
-                    resolve([]);
+    return new Promise(function (resolve) {
+        if (!term || term.length < 2) {
+            resolve([]);
+            return;
+        }
+ 
+        var now = Date.now();
+        var cacheKey = 'drug_' + term.toLowerCase();
+ 
+        if (searchCache[cacheKey] && (now - searchCache[cacheKey].timestamp) < cacheExpiry) {
+            resolve(searchCache[cacheKey].results);
+            return;
+        }
+ 
+        // ef=RXCUIS pulls back the RxNorm concept ID alongside each name,
+        // maxList caps how many suggestions come back.
+        var url = APIs.RXTERMS +
+            '?terms=' + encodeURIComponent(term) +
+            '&ef=RXCUIS' +
+            '&maxList=8';
+ 
+        fetch(url)
+            .then(function (response) {
+                if (!response.ok) throw new Error('RxTerms API error');
+                return response.json();
+            })
+            .then(function (data) {
+                var results = [];
+ 
+                // Shape: [totalCount, codes[], extraFields{RXCUIS: [[rxcui], ...]}, displayStrings[[name], ...]]
+                var names = data && data[3] ? data[3] : [];
+                var rxcuis = data && data[2] && data[2].RXCUIS ? data[2].RXCUIS : [];
+ 
+                names.forEach(function (row, i) {
+                    var name = row && row[0];
+                    if (!name) return;
+                    var rxcui = rxcuis[i] && rxcuis[i][0] ? rxcuis[i][0] : null;
+                    results.push({ name: name, rxcui: rxcui });
                 });
-        });
-    }
+ 
+                searchCache[cacheKey] = { results: results, timestamp: now };
+                resolve(results);
+            })
+            .catch(function (err) {
+                console.error('RxTerms error:', err);
+                resolve([]);
+            });
+    });
+}
+ 
 
     /**
      * Check drug interactions
@@ -312,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
             searchAPI(APIs.CONDITION, SYMPTOM_WORDS[0], 'condition_demo').then(function (conditions) {
                 if (conditions && conditions.length > 0) {
                     var conditionChips = conditions.slice(0, 2).map(function (c) {
-                        return '<span class="chip" style="background:#e8f4f8;">🏥 ' + c + '</span>';
+                        return '<span class="chip" style="background:#e8f4f8;"> ' + c + '</span>';
                     });
                     if (conditionChips.length > 0) {
                         chipsEl.innerHTML += conditionChips.join('');
@@ -344,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderMedicationTags() {
         medicationTags.innerHTML = medications.map(function (med, idx) {
             return '<div class="medication-tag">' +
-                '<span>💊 ' + med + '</span>' +
+                '<span> ' + med + '</span>' +
                 '<button type="button" data-index="' + idx + '" aria-label="Remove ' + med + '">×</button>' +
                 '</div>';
         }).join('');
@@ -395,47 +401,45 @@ document.addEventListener('DOMContentLoaded', function () {
         var suggestionTimeout;
 
         medicationInput.addEventListener('input', function () {
-            clearTimeout(suggestionTimeout);
-            var term = medicationInput.value.trim();
-
-            if (term.length < 2) {
-                medicationSuggestions.innerHTML = '';
+    clearTimeout(suggestionTimeout);
+    var term = medicationInput.value.trim();
+ 
+    if (term.length < 2) {
+        medicationSuggestions.innerHTML = '';
+        return;
+    }
+ 
+    medicationSuggestions.innerHTML = '<p class="suggestion-loading">Searching medications...</p>';
+ 
+    suggestionTimeout = setTimeout(function () {
+        searchDrugs(term).then(function (drugs) {
+            if (!drugs || drugs.length === 0) {
+                medicationSuggestions.innerHTML = '<p class="suggestion-none">No medications found</p>';
                 return;
             }
-
-            medicationSuggestions.innerHTML = '<p class="suggestion-loading">Searching medications...</p>';
-
-            // Debounce API calls
-            suggestionTimeout = setTimeout(function () {
-                searchDrugs(term).then(function (drugs) {
-                    if (!drugs || drugs.length === 0) {
-                        medicationSuggestions.innerHTML = '<p class="suggestion-none">No medications found</p>';
-                        return;
-                    }
-
-                    var html = '<ul class="suggestion-list">' +
-                        drugs.map(function (drug) {
-                            return '<li><a href="#" data-drug="' + drug + '" class="suggestion-item">' +
-                                '<span class="suggestion-icon">💊</span>' +
-                                '<span class="suggestion-text">' + drug + '</span>' +
-                                '</a></li>';
-                        }).join('') +
-                        '</ul>';
-
-                    medicationSuggestions.innerHTML = html;
-
-                    // Add click handlers
-                    var items = medicationSuggestions.querySelectorAll('.suggestion-item');
-                    items.forEach(function (item) {
-                        item.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            var drug = this.getAttribute('data-drug');
-                            addMedication(drug);
-                        });
-                    });
+ 
+            var html = '<ul class="suggestion-list">' +
+                drugs.map(function (drug) {
+                    return '<li><a href="#" data-drug="' + drug.name + '" class="suggestion-item">' +
+                        '<span class="suggestion-icon">💊</span>' +
+                        '<span class="suggestion-text">' + drug.name + '</span>' +
+                        '</a></li>';
+                }).join('') +
+                '</ul>';
+ 
+            medicationSuggestions.innerHTML = html;
+ 
+            var items = medicationSuggestions.querySelectorAll('.suggestion-item');
+            items.forEach(function (item) {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var drug = this.getAttribute('data-drug');
+                    addMedication(drug);
                 });
-            }, 300);
+            });
         });
+    }, 300);
+});
 
         // Handle pasting comma-separated medications
         medicationInput.addEventListener('paste', function (e) {

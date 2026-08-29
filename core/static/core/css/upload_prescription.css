@@ -24,7 +24,7 @@
 }
 
 .field-label {
-    display: block;
+    display: block; 
     font-weight: 600;
     font-size: 15px;
     margin-bottom: 10px;
@@ -268,3 +268,5 @@
         align-items: flex-start;
     }
 }
+
+

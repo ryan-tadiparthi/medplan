@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedPlan — My Profile</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#6C5CE7;
+  --purple-dark:#5546c8;
+  --blue:#4FACFE;
+  --ink:#171A2E;
+  --ink-soft:#454A6B;
+  --bg:#F6F7FC;
+  --surface:#FFFFFF;
+  --line:#E4E7F5;
+  --mint:#22C7A9;
+  --amber:#E08E00;
+  --red:#D64545;
+  --gradient:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);
+  --shadow-sm:0 2px 10px rgba(23,26,46,0.06);
+  --base-size:17px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:var(--base-size);}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:60px;}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;color:var(--ink);}
+button, input{font-family:'Inter',sans-serif;font-size:1rem;}
+.wrap{max-width:640px;margin:0 auto;padding:0 24px;}
+a:focus-visible, button:focus-visible, input:focus-visible{outline:3px solid var(--purple);outline-offset:2px;border-radius:4px;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:24px;font-weight:600;font-size:1rem;border:none;cursor:pointer;min-height:48px;width:100%;transition:transform .2s;}
+.btn-primary{background:var(--gradient);color:#fff;box-shadow:0 8px 20px rgba(108,92,231,0.28);}
+.btn-primary:hover{transform:translateY(-2px);}
+.btn-secondary{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+.btn-secondary:hover{border-color:var(--purple);}
+.btn-danger{background:#FBEAEA;color:#A32424;}
+.btn-danger:hover{background:#F6D8D8;}
+.btn-sm{padding:9px 16px;min-height:38px;font-size:0.9rem;border-radius:18px;width:auto;}
+
+.card{background:var(--surface);border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow-sm);padding:28px;margin-bottom:22px;}
+.section-label{font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);font-weight:700;margin-bottom:12px;}
+
+/* Header / hero */
+.hero{background:var(--gradient);border-radius:0 0 28px 28px;padding:40px 24px 60px;text-align:center;color:#fff;margin-bottom:-46px;}
+.hero .back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.9);text-decoration:none;font-weight:600;font-size:0.9rem;margin-bottom:10px;}
+
+.avatar-wrap{position:relative;width:120px;height:120px;margin:0 auto 14px;}
+.avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 8px 24px rgba(0,0,0,0.18);background:#fff;display:flex;align-items:center;justify-content:center;font-size:2.6rem;font-weight:700;color:var(--purple);font-family:'Space Grotesk',sans-serif;}
+.avatar-edit{position:absolute;bottom:2px;right:2px;width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--purple);color:var(--purple);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.95rem;}
+.avatar-edit:hover{background:var(--purple);color:#fff;}
+.hero-name{font-size:1.4rem;font-weight:700;}
+.hero-sub{font-size:0.92rem;opacity:0.9;margin-top:2px;}
+
+.profile-card{margin-top:70px;}
+
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.action-grid .full{grid-column:1 / -1;}
+
+.med-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);}
+.med-item:last-child{border-bottom:none;}
+.med-item .m-name{font-weight:600;}
+.med-item .m-meta{color:var(--ink-soft);font-size:0.88rem;}
+.empty-note{color:var(--ink-soft);font-style:italic;padding:12px 0;}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:0.92rem;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:50;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(23,26,46,0.45);display:none;align-items:center;justify-content:center;z-index:40;padding:20px;}
+.modal-backdrop.open{display:flex;}
+.modal{background:#fff;border-radius:18px;padding:26px;max-width:400px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.25);}
+.modal h3{font-size:1.15rem;margin-bottom:6px;}
+.modal .sub{color:var(--ink-soft);font-size:0.88rem;margin-bottom:18px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-weight:600;font-size:0.9rem;margin-bottom:6px;}
+.field input{width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid var(--line);font-size:1rem;}
+.field input:focus{border-color:var(--purple);}
+.error-text{color:var(--red);font-size:0.85rem;margin-top:6px;display:none;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.hint-note{font-size:0.8rem;color:var(--ink-soft);margin-top:10px;display:flex;gap:6px;align-items:flex-start;}
+
+.logout-screen{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:60;}
+.logout-screen.open{display:flex;}
+.logout-screen .lo-icon{width:70px;height:70px;border-radius:50%;background:var(--gradient);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 18px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="back-link" href="#" id="backLink"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
+  <div class="avatar-wrap">
+    <div class="avatar" id="avatarDisplay"></div>
+    <button class="avatar-edit" id="avatarEditBtn" title="Change photo"><i class="fa-solid fa-camera"></i></button>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+  </div>
+  <div class="hero-name" id="heroName">Your name</div>
+  <div class="hero-sub" id="heroSub">Set up your health profile</div>
+</div>
+
+<main class="wrap">
+
+  <section class="card profile-card">
+    <div class="section-label">Account</div>
+    <div class="action-grid">
+      <button class="btn btn-secondary" id="shareBtn"><i class="fa-solid fa-share-nodes"></i> Share profile</button>
+      <button class="btn btn-secondary" id="passwordBtn"><i class="fa-solid fa-lock"></i> Change password</button>
+      <button class="btn btn-danger full" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-label">Recent medications</div>
+    <div id="recentMeds"></div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-backdrop" id="passwordModalBackdrop">
+  <div class="modal">
+    <h3>Change password</h3>
+    <p class="sub">Update the password for this profile.</p>
+    <div class="field"><label for="curPass">Current password</label><input type="password" id="curPass"></div>
+    <div class="field"><label for="newPass">New password</label><input type="password" id="newPass"></div>
+    <div class="field"><label for="confirmPass">Confirm new password</label><input type="password" id="confirmPass"></div>
+    <div class="error-text" id="passError">Please check the fields above.</div>
+    <div class="hint-note"><i class="fa-solid fa-circle-info"></i><span>This password is stored only on this device for this demo and isn't connected to a real login system.</span></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelPasswordBtn">Cancel</button>
+      <button class="btn btn-primary" id="savePasswordBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG OUT CONFIRM MODAL -->
+<div class="modal-backdrop" id="logoutModalBackdrop">
+  <div class="modal">
+    <h3>Log out?</h3>
+    <p class="sub">You'll need to log back in to see your dashboard again.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelLogoutBtn">Cancel</button>
+      <button class="btn btn-danger" id="confirmLogoutBtn">Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGGED OUT SCREEN -->
+<div class="logout-screen" id="loggedOutScreen">
+  <div>
+    <div class="lo-icon"><i class="fa-solid fa-check"></i></div>
+    <h2 style="margin-bottom:8px;">You're logged out</h2>
+    <p style="color:var(--ink-soft);margin-bottom:22px;">Your data is safe and still on this device.</p>
+    <button class="btn btn-primary" id="loginAgainBtn" style="width:auto;padding:13px 28px;">Log back in</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  var state = { profile:null, medications:[], profilePhoto:null, localPassword:null };
+  var toastTimer = null;
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : s;
+    return d.innerHTML;
+  }
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  async function loadAll(){
+    try{ var p = await window.storage.get('profile', false); if (p && p.value) state.profile = JSON.parse(p.value); }catch(e){}
+    try{ var m = await window.storage.get('medications', false); if (m && m.value) state.medications = JSON.parse(m.value); }catch(e){}
+    try{ var ph = await window.storage.get('profilePhoto', false); if (ph && ph.value) state.profilePhoto = ph.value; }catch(e){}
+    try{ var pw = await window.storage.get('localPassword', false); if (pw && pw.value) state.localPassword = pw.value; }catch(e){}
+  }
+
+  async function saveKey(key, value){
+    try{ await window.storage.set(key, value, false); }catch(e){ console.error('Could not save', key, e); }
+  }
+
+  function initials(name){
+    if (!name) return '?';
+    var parts = name.trim().split(/\s+/);
+    var i = parts[0] ? parts[0][0] : '';
+    var j = parts.length > 1 ? parts[parts.length-1][0] : '';
+    return (i+j).toUpperCase();
+  }
+
+  function renderHeader(){
+    var avatarEl = document.getElementById('avatarDisplay');
+    if (state.profilePhoto){
+      avatarEl.innerHTML = '<img src="'+state.profilePhoto+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+    } else {
+      avatarEl.textContent = state.profile ? initials(state.profile.name) : '?';
+    }
+
+    document.getElementById('heroName').textContent = state.profile && state.profile.name ? state.profile.name : 'Your name';
+    var sub = 'Set up your health profile';
+    if (state.profile){
+      var bits = [];
+      if (state.profile.age) bits.push(state.profile.age + ' yrs');
+      if (state.medications.length) bits.push(state.medications.length + ' medicine' + (state.medications.length===1?'':'s') + ' tracked');
+      sub = bits.length ? bits.join(' · ') : 'Health profile active';
+    }
+    document.getElementById('heroSub').textContent = sub;
+  }
+
+  function renderRecentMeds(){
+    var wrap = document.getElementById('recentMeds');
+    if (!state.medications.length){
+      wrap.innerHTML = '<p class="empty-note">No medications added yet. Add some from the main dashboard.</p>';
+      return;
+    }
+    var recent = state.medications.slice(-5).reverse();
+    wrap.innerHTML = recent.map(function(m){
+      var times = (m.times||[]).join(', ');
+      return '<div class="med-item"><div><div class="m-name">'+escapeHtml(m.name)+'</div>' +
+        '<div class="m-meta">'+escapeHtml(m.dosage||'—')+(times?' · '+escapeHtml(times):'')+'</div></div>' +
+        '<i class="fa-solid fa-pills" style="color:var(--purple);"></i></div>';
+    }).join('');
+  }
+
+  /* ---------------- AVATAR ---------------- */
+
+  document.getElementById('avatarEditBtn').addEventListener('click', function(){
+    document.getElementById('avatarInput').click();
+  });
+  document.getElementById('avatarInput').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2*1024*1024){
+      showToast('Please choose an image under 2MB.');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = async function(evt){
+      state.profilePhoto = evt.target.result;
+      await saveKey('profilePhoto', state.profilePhoto);
+      renderHeader();
+      showToast('Profile photo updated.');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ---------------- SHARE PROFILE ---------------- */
+
+  document.getElementById('shareBtn').addEventListener('click', async function(){
+    if (!state.profile){
+      showToast('Set up your health profile first.');
+      return;
+    }
+    var lines = [
+      'MedPlan profile — ' + state.profile.name,
+      state.profile.age ? 'Age: ' + state.profile.age : null,
+      state.profile.allergies ? 'Allergies: ' + state.profile.allergies : null,
+      state.profile.conditions ? 'Conditions: ' + state.profile.conditions : null,
+      state.medications.length ? 'Medicines: ' + state.medications.map(function(m){ return m.name; }).join(', ') : null
+    ].filter(Boolean);
+    var text = lines.join('\n');
+
+    if (navigator.share){
+      try{
+        await navigator.share({ title:'MedPlan profile', text:text });
+        return;
+      }catch(e){ /* user cancelled or unsupported, fall through to copy */ }
+    }
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast('Profile summary copied to clipboard.');
+    }catch(e){
+      showToast('Could not copy automatically — select and copy the text manually.');
+    }
+  });
+
+  /* ---------------- CHANGE PASSWORD ---------------- */
+
+  document.getElementById('passwordBtn').addEventListener('click', function(){
+    document.getElementById('curPass').value = '';
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+    document.getElementById('passError').style.display = 'none';
+    document.getElementById('passwordModalBackdrop').classList.add('open');
+  });
+  document.getElementById('cancelPasswordBtn').addEventListener('click', function(){
+    document.getElementById('passwordModalBackdrop').classList.remove('open');
+  });
+  document.getElementById('savePasswordBtn').addEventListener('click', async function(){
+    var cur = document.getElementById('curPass').value;
+    var next = document.getElementById('newPass').value;
+    var confirm = document.getElementById('confirmPass').value;
+    var errEl = document.getElementById('passError');
+
+    if (state.localPassword && cur !== state.localPassword){
+      errEl.textContent = 'Current password is incorrect.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (!next || next.length < 4){
+      errEl.textContent = 'New password must be at least 4 characters.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (next !== confirm){
+      errEl.textContent = "New password and confirmation don't match.";
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+    state.localPassword = next;
+    await saveKey('localPassword', next);
+    document.getElementById('passwordModalBackdrop').classList.remove('open');
+    showToast('Password updated.');
+  });
+
+  /* ---------------- LOG OUT ---------------- */
+
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    document.getElementById('logoutModalBackdrop').classList.add('open');
+  });
+  document.getElementById('cancelLogoutBtn').addEventListener('click', function(){
+    document.getElementById('logoutModalBackdrop').classList.remove('open');
+  });
+  document.getElementById('confirmLogoutBtn').addEventListener('click', function(){
+    document.getElementById('logoutModalBackdrop').classList.remove('open');
+    document.getElementById('loggedOutScreen').classList.add('open');
+  });
+  document.getElementById('loginAgainBtn').addEventListener('click', function(){
+    document.getElementById('loggedOutScreen').classList.remove('open');
+  });
+
+  document.getElementById('backLink').addEventListener('click', function(e){
+    e.preventDefault();
+    showToast('Link this to your dashboard page when you host both together.');
+  });
+
+  /* ---------------- INIT ---------------- */
+
+  async function init(){
+    await loadAll();
+    renderHeader();
+    renderRecentMeds();
+  }
+
+  init();
+
+})();
+</script>
+</body>
+</html>

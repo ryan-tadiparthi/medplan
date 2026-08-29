@@ -56,6 +56,7 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 .btn-danger:hover{background:#F6D8D8;}
 .btn-sm{padding:9px 16px;min-height:38px;font-size:0.9rem;border-radius:18px;}
 .btn:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-ghost{background:transparent;border:none;color:var(--purple-dark);font-weight:600;cursor:pointer;padding:6px 10px;min-height:auto;font-size:0.88rem;}
 
 /* ---------- Layout sections ---------- */
 main{padding-top:32px;}
@@ -91,6 +92,9 @@ main{padding-top:32px;}
 .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--purple);}
 .field .hint{font-size:0.82rem;color:var(--ink-soft);margin-top:5px;}
 .field textarea{resize:vertical;min-height:70px;}
+.field-checkbox{display:flex;align-items:center;gap:10px;padding-top:30px;}
+.field-checkbox input{width:20px;height:20px;flex-shrink:0;}
+.field-checkbox label{margin-bottom:0;font-weight:600;font-size:0.95rem;}
 .error-text{color:var(--red);font-size:0.85rem;margin-top:6px;display:none;}
 
 /* ---------- Stat cards ---------- */
@@ -117,8 +121,11 @@ table.data-table{width:100%;border-collapse:collapse;}
 table.data-table th{text-align:left;font-size:0.85rem;color:var(--ink-soft);padding:10px 12px;border-bottom:2px solid var(--line);}
 table.data-table td{padding:14px 12px;border-bottom:1px solid var(--line);font-size:0.98rem;vertical-align:top;}
 table.data-table tr:last-child td{border-bottom:none;}
+table.data-table tr.side-effect-row td{border-bottom:1px solid var(--line);background:#F8F7FF;font-size:0.9rem;color:var(--ink-soft);}
 .pill{display:inline-block;padding:4px 12px;border-radius:12px;background:#EFEBFF;color:var(--purple-dark);font-weight:600;font-size:0.85rem;margin:2px 4px 2px 0;}
 .empty-note{color:var(--ink-soft);font-style:italic;padding:16px 0;}
+.bell-toggle{background:none;border:1.5px solid var(--line);width:38px;height:38px;border-radius:10px;cursor:pointer;color:var(--ink-soft);}
+.bell-toggle.on{background:#FFF3CD;border-color:var(--amber);color:#854F0B;}
 
 /* ---------- Calendar ---------- */
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
@@ -166,6 +173,19 @@ table.data-table tr:last-child td{border-bottom:none;}
 .tip-list li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
 .tip-list li:last-child{border-bottom:none;}
 .tip-list i{color:var(--mint);font-size:1.1rem;margin-top:2px;}
+
+/* ---------- Reminders & insights ---------- */
+.reminder-banner{background:#FFF3CD;border:1.5px solid var(--amber);border-radius:14px;padding:16px 18px;margin-bottom:20px;}
+.reminder-banner .rb-title{font-weight:700;color:#7A5A00;display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.reminder-banner .rb-item{font-size:0.92rem;color:#7A5A00;padding:3px 0;}
+.insight-card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+.insight-card .i-title{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;font-size:1rem;}
+.insight-card .i-title i{color:var(--amber);}
+.insight-card p{color:var(--ink-soft);font-size:0.92rem;}
+.disclaimer-box{background:#FFF7E8;border:1px solid #F1D9A0;border-radius:12px;padding:14px 16px;font-size:0.86rem;color:#7A5A00;margin-top:16px;display:flex;gap:10px;align-items:flex-start;}
+.disclaimer-box i{margin-top:2px;flex-shrink:0;}
+.side-effect-note{background:#F8F7FF;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:0.88rem;color:var(--ink-soft);}
+.side-effect-note strong{color:var(--ink);}
 
 @media print{
   header.top, .no-print{display:none !important;}
@@ -247,16 +267,24 @@ table.data-table tr:last-child td{border-bottom:none;}
   <!-- MEDICATIONS + CALENDAR -->
   <section class="card" id="medsSection">
     <h2><i class="fa-solid fa-pills"></i> Medications and appointments</h2>
-    <p class="sub">Add your medicines and doctor visits — they'll show up on the calendar automatically.</p>
+    <p class="sub">Add your medicines and doctor visits — they'll show up on the calendar automatically, with optional reminders.</p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+      <button class="btn btn-secondary btn-sm" id="enableNotifBtn"><i class="fa-solid fa-bell"></i> Enable reminder notifications</button>
+      <span id="notifStatus" style="align-self:center;font-size:0.85rem;color:var(--ink-soft);"></span>
+    </div>
+
+    <div id="reminderBanner"></div>
 
     <div class="section-label">Today's schedule</div>
     <div id="todaySchedule" style="margin-bottom:26px;"></div>
 
     <div class="section-label">Your medications</div>
     <table class="data-table" id="medTable" style="margin-bottom:16px;">
-      <thead><tr><th>Medicine</th><th>Dosage</th><th>Times</th><th>Notes</th><th></th></tr></thead>
+      <thead><tr><th>Medicine</th><th>Dosage</th><th>Times</th><th>Notes</th><th>Remind</th><th>Info</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
+    <p class="side-effect-note" style="margin-bottom:16px;"><i class="fa-solid fa-circle-info"></i> <strong>About the "Info" column:</strong> it shows general, commonly-known side effects for widely used medicines — not a full list, and not specific to your dose or health history. Always check the leaflet that came with your medicine or ask your pharmacist or doctor.</p>
     <button class="btn btn-secondary btn-sm" id="addMedToggle" style="margin-bottom:22px;"><i class="fa-solid fa-plus"></i> Add a medicine</button>
 
     <div id="addMedForm" style="display:none;margin-bottom:30px;">
@@ -265,6 +293,8 @@ table.data-table tr:last-child td{border-bottom:none;}
         <div class="field"><label for="mDosage">Dosage</label><input type="text" id="mDosage" placeholder="e.g. 500mg"></div>
         <div class="field"><label for="mTimes">Times of day</label><input type="text" id="mTimes" placeholder="e.g. 08:00, 20:00"><div class="hint">Separate multiple times with commas.</div></div>
         <div class="field"><label for="mNotes">Notes (optional)</label><input type="text" id="mNotes" placeholder="e.g. Take with food"></div>
+        <div class="field"><label for="mRemindMins">Remind me before (minutes)</label><input type="number" id="mRemindMins" min="0" max="180" placeholder="e.g. 10" value="0"><div class="hint">0 means remind right at dose time.</div></div>
+        <div class="field-checkbox"><input type="checkbox" id="mRemind" checked><label for="mRemind">Turn on reminders for this medicine</label></div>
       </div>
       <div class="error-text" id="medError">Please add a medicine name and at least one time.</div>
       <button class="btn btn-primary btn-sm" id="saveMedBtn"><i class="fa-solid fa-check"></i> Save medicine</button>
@@ -322,6 +352,24 @@ table.data-table tr:last-child td{border-bottom:none;}
     <p class="empty-note" id="vitalsEmpty">No readings yet — add your first one above.</p>
   </section>
 
+  <!-- TRENDS & INSIGHTS -->
+  <section class="card" id="insightsSection">
+    <h2><i class="fa-solid fa-chart-line"></i> Trends &amp; insights</h2>
+    <p class="sub">Patterns from what you've logged, plus general educational notes — not a diagnosis or a prediction about you personally.</p>
+
+    <div class="section-label">Medication adherence — last 7 days</div>
+    <div class="chart-wrap" id="adherenceChartWrap" style="height:230px;display:none;"><canvas id="adherenceChart"></canvas></div>
+    <p class="empty-note" id="adherenceEmpty">Add medicines and check them off in "Today's schedule" to see your adherence trend here.</p>
+
+    <div class="section-label" style="margin-top:26px;">Things worth keeping an eye on</div>
+    <div id="insightCards"></div>
+
+    <div class="disclaimer-box">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>This section shares general, population-level health education based on common medical guidance. It does not predict your future health, diagnose anything, or replace your doctor's judgment. Always discuss changes in your readings or medicines with a healthcare professional.</span>
+    </div>
+  </section>
+
   <!-- HEALTH TIPS -->
   <section class="card" id="tipsSection">
     <h2><i class="fa-solid fa-lightbulb"></i> Helpful tips for you</h2>
@@ -348,7 +396,42 @@ table.data-table tr:last-child td{border-bottom:none;}
   var selectedDay = null;
   var chartInstance = null;
   var vitalsChartInstance = null;
+  var adherenceChartInstance = null;
   var currentMetric = 'weight';
+  var openInfoIds = {};
+  var notifiedKeys = {};
+
+  /* General, commonly-known side effects for widely used medicines.
+     Informational only — not exhaustive, not dosage-specific, not medical advice. */
+  var SIDE_EFFECTS = {
+    'metformin': ['Nausea or upset stomach', 'Diarrhea, especially when starting', 'Metallic taste', 'Usually improves by taking with food'],
+    'lisinopril': ['Dry, tickly cough', 'Dizziness, especially when standing up', 'Headache'],
+    'atorvastatin': ['Muscle aches', 'Digestive upset', 'Rarely, liver enzyme changes checked by blood tests'],
+    'simvastatin': ['Muscle aches', 'Digestive upset', 'Headache'],
+    'amlodipine': ['Ankle or leg swelling', 'Flushing', 'Headache', 'Dizziness'],
+    'levothyroxine': ['Usually well tolerated at the right dose', 'Too high a dose can cause a racing heart, jitteriness, or trouble sleeping'],
+    'aspirin': ['Stomach irritation or heartburn', 'Increased bruising or bleeding', 'Take with food to reduce stomach upset'],
+    'ibuprofen': ['Stomach upset', 'Increased blood pressure with regular use', 'Fluid retention', 'Avoid long-term use without medical advice'],
+    'paracetamol': ['Generally well tolerated at recommended doses', 'Avoid exceeding the daily limit, especially with alcohol'],
+    'acetaminophen': ['Generally well tolerated at recommended doses', 'Avoid exceeding the daily limit, especially with alcohol'],
+    'omeprazole': ['Headache', 'Stomach pain or diarrhea', 'Long-term use sometimes linked to lower vitamin B12 or magnesium'],
+    'metoprolol': ['Fatigue', 'Cold hands or feet', 'Slowed heart rate', 'Dizziness'],
+    'losartan': ['Dizziness', 'Higher potassium levels, monitored by blood tests', 'Usually fewer cough issues than lisinopril-type drugs'],
+    'hydrochlorothiazide': ['Increased urination', 'Low potassium', 'Dizziness', 'Sun sensitivity'],
+    'warfarin': ['Increased bleeding or bruising risk', 'Requires regular blood tests to monitor levels', 'Many food and drug interactions'],
+    'insulin': ['Low blood sugar (shakiness, sweating, confusion)', 'Weight gain', 'Injection site reactions'],
+    'sertraline': ['Nausea, especially at first', 'Sleep changes', 'Sexual side effects', 'Usually settles after a few weeks'],
+    'escitalopram': ['Nausea', 'Sleep changes', 'Sexual side effects'],
+    'alprazolam': ['Drowsiness', 'Dizziness', 'Dependency risk with regular use', 'Avoid alcohol'],
+    'prednisone': ['Increased appetite and weight gain', 'Mood changes', 'Trouble sleeping', 'Raised blood sugar'],
+    'albuterol': ['Jitteriness or shakiness', 'Fast heartbeat', 'Headache'],
+    'azithromycin': ['Nausea or stomach upset', 'Diarrhea', 'Finish the full course as prescribed'],
+    'amoxicillin': ['Stomach upset', 'Diarrhea', 'Allergic rash in some people'],
+    'gabapentin': ['Drowsiness', 'Dizziness', 'Coordination changes'],
+    'tramadol': ['Drowsiness', 'Nausea', 'Dizziness', 'Constipation'],
+    'furosemide': ['Increased urination', 'Low potassium', 'Dizziness from fluid loss'],
+    'clopidogrel': ['Increased bruising or bleeding', 'Stomach upset']
+  };
 
   function pad(n){ return n<10 ? '0'+n : ''+n; }
   function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
@@ -417,6 +500,7 @@ table.data-table tr:last-child td{border-bottom:none;}
     renderGlance();
     renderTips();
     renderEmergencyCard();
+    renderInsights();
   }
 
   function statCard(label, value, cat){
@@ -489,21 +573,53 @@ table.data-table tr:last-child td{border-bottom:none;}
 
   /* ---------------- MEDICATIONS ---------------- */
 
+  function findSideEffects(medName){
+    var n = (medName||'').toLowerCase().trim();
+    if (!n) return null;
+    for (var key in SIDE_EFFECTS){
+      if (n.indexOf(key) >= 0 || key.indexOf(n) >= 0){
+        return { key:key, effects: SIDE_EFFECTS[key] };
+      }
+    }
+    return null;
+  }
+
   function renderMedTable(){
     var tbody = document.querySelector('#medTable tbody');
     if (state.medications.length === 0){
-      tbody.innerHTML = '<tr><td colspan="5" class="empty-note">No medicines added yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-note">No medicines added yet.</td></tr>';
     } else {
-      tbody.innerHTML = state.medications.map(function(m){
+      var rows = '';
+      state.medications.forEach(function(m){
         var times = m.times.map(function(t){ return '<span class="pill">'+t+'</span>'; }).join('');
-        return '<tr><td>'+escapeHtml(m.name)+'</td><td>'+escapeHtml(m.dosage||'—')+'</td><td>'+times+'</td><td>'+escapeHtml(m.notes||'—')+'</td>' +
-          '<td><button class="btn btn-danger btn-sm" data-remove-med="'+m.id+'"><i class="fa-solid fa-trash"></i></button></td></tr>';
-      }).join('');
+        var remindOn = !!m.remindEnabled;
+        rows += '<tr>' +
+          '<td>'+escapeHtml(m.name)+'</td>' +
+          '<td>'+escapeHtml(m.dosage||'—')+'</td>' +
+          '<td>'+times+'</td>' +
+          '<td>'+escapeHtml(m.notes||'—')+'</td>' +
+          '<td><button class="bell-toggle'+(remindOn?' on':'')+'" data-toggle-remind="'+m.id+'" title="'+(remindOn?'Reminders on':'Reminders off')+'"><i class="fa-solid fa-bell'+(remindOn?'':'-slash')+'"></i></button></td>' +
+          '<td><button class="btn-ghost" data-toggle-info="'+m.id+'"><i class="fa-solid fa-circle-info"></i> Info</button></td>' +
+          '<td><button class="btn btn-danger btn-sm" data-remove-med="'+m.id+'"><i class="fa-solid fa-trash"></i></button></td>' +
+        '</tr>';
+        if (openInfoIds[m.id]){
+          var found = findSideEffects(m.name);
+          var text;
+          if (found){
+            text = '<strong>Commonly reported with medicines like '+escapeHtml(m.name)+':</strong> '+found.effects.map(escapeHtml).join(' · ');
+          } else {
+            text = 'No general reference info on file for "'+escapeHtml(m.name)+'". Ask your pharmacist or check the leaflet that came with it for possible side effects.';
+          }
+          rows += '<tr class="side-effect-row"><td colspan="7">'+text+' <span style="display:block;margin-top:6px;font-style:italic;">General information only, not exhaustive and not personalized — always confirm with your pharmacist or doctor.</span></td></tr>';
+        }
+      });
+      tbody.innerHTML = rows;
     }
     renderTodaySchedule();
     renderCalendar();
     renderGlance();
     renderEmergencyCard();
+    renderInsights();
   }
 
   function escapeHtml(s){
@@ -528,6 +644,7 @@ table.data-table tr:last-child td{border-bottom:none;}
     var doses = allDosesFlat();
     if (doses.length === 0){
       wrap.innerHTML = '<p class="empty-note">Add a medicine below to see today\'s schedule here.</p>';
+      renderReminderBanner();
       return;
     }
     var today = todayStr();
@@ -540,6 +657,7 @@ table.data-table tr:last-child td{border-bottom:none;}
         '<span style="'+(isTaken?'text-decoration:line-through;color:var(--ink-soft);':'')+'"><strong>'+d.time+'</strong> — '+escapeHtml(d.name)+' ('+escapeHtml(d.dosage||'—')+')</span>' +
         '</label></div>';
     }).join('');
+    renderReminderBanner();
   }
 
   function toggleDoseTaken(doseKey){
@@ -550,6 +668,7 @@ table.data-table tr:last-child td{border-bottom:none;}
     else state.takenLog[today].push(doseKey);
     saveKey('takenLog');
     renderTodaySchedule();
+    renderInsights();
   }
 
   function saveMedication(){
@@ -557,6 +676,8 @@ table.data-table tr:last-child td{border-bottom:none;}
     var dosage = document.getElementById('mDosage').value.trim();
     var timesRaw = document.getElementById('mTimes').value.trim();
     var notes = document.getElementById('mNotes').value.trim();
+    var remindEnabled = document.getElementById('mRemind').checked;
+    var remindMinutes = parseInt(document.getElementById('mRemindMins').value) || 0;
     var errEl = document.getElementById('medError');
 
     var times = timesRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
@@ -567,13 +688,15 @@ table.data-table tr:last-child td{border-bottom:none;}
     }
     errEl.style.display = 'none';
 
-    state.medications.push({ id:uid(), name:name, dosage:dosage, times:times, notes:notes });
+    state.medications.push({ id:uid(), name:name, dosage:dosage, times:times, notes:notes, remindEnabled:remindEnabled, remindMinutes:remindMinutes });
     saveKey('medications');
 
     document.getElementById('mName').value = '';
     document.getElementById('mDosage').value = '';
     document.getElementById('mTimes').value = '';
     document.getElementById('mNotes').value = '';
+    document.getElementById('mRemindMins').value = '0';
+    document.getElementById('mRemind').checked = true;
     document.getElementById('addMedForm').style.display = 'none';
 
     renderMedTable();
@@ -581,8 +704,103 @@ table.data-table tr:last-child td{border-bottom:none;}
 
   function removeMedication(id){
     state.medications = state.medications.filter(function(m){ return m.id !== id; });
+    delete openInfoIds[id];
     saveKey('medications');
     renderMedTable();
+  }
+
+  function toggleReminder(id){
+    var med = state.medications.find(function(m){ return m.id === id; });
+    if (!med) return;
+    med.remindEnabled = !med.remindEnabled;
+    saveKey('medications');
+    renderMedTable();
+  }
+
+  function toggleInfo(id){
+    openInfoIds[id] = !openInfoIds[id];
+    renderMedTable();
+  }
+
+  /* ---------------- REMINDERS ---------------- */
+
+  function updateNotifStatus(){
+    var el = document.getElementById('notifStatus');
+    if (!('Notification' in window)){
+      el.textContent = 'Notifications are not supported in this browser.';
+    } else if (Notification.permission === 'granted'){
+      el.textContent = 'Notifications are on.';
+    } else if (Notification.permission === 'denied'){
+      el.textContent = 'Notifications are blocked — enable them in your browser settings.';
+    } else {
+      el.textContent = 'Notifications are off — click to enable.';
+    }
+  }
+
+  function enableNotifications(){
+    if (!('Notification' in window)){
+      updateNotifStatus();
+      return;
+    }
+    Notification.requestPermission().then(function(){ updateNotifStatus(); });
+  }
+
+  function renderReminderBanner(){
+    var wrap = document.getElementById('reminderBanner');
+    var now = new Date();
+    var nowMinutes = now.getHours()*60 + now.getMinutes();
+    var today = todayStr();
+    var taken = state.takenLog[today] || [];
+
+    var upcoming = [];
+    state.medications.forEach(function(m){
+      if (!m.remindEnabled) return;
+      m.times.forEach(function(t){
+        var parts = t.split(':');
+        if (parts.length < 2) return;
+        var doseMinutes = parseInt(parts[0])*60 + parseInt(parts[1]);
+        var diff = doseMinutes - nowMinutes;
+        var doseKey = m.id+'_'+t;
+        if (diff >= -15 && diff <= 60 && taken.indexOf(doseKey) < 0){
+          upcoming.push({ name:m.name, dosage:m.dosage, time:t, diff:diff });
+        }
+      });
+    });
+
+    if (upcoming.length === 0){
+      wrap.innerHTML = '';
+      return;
+    }
+    upcoming.sort(function(a,b){ return a.diff - b.diff; });
+    var items = upcoming.map(function(u){
+      var when = u.diff < 0 ? 'now (a little overdue)' : (u.diff === 0 ? 'right now' : 'in about '+u.diff+' min');
+      return '<div class="rb-item"><i class="fa-solid fa-clock"></i> '+escapeHtml(u.name)+' ('+escapeHtml(u.dosage||'—')+') at '+u.time+' — '+when+'</div>';
+    }).join('');
+    wrap.innerHTML = '<div class="reminder-banner"><div class="rb-title"><i class="fa-solid fa-bell"></i> Upcoming doses</div>'+items+'</div>';
+  }
+
+  function checkReminders(){
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    var now = new Date();
+    var nowMinutes = now.getHours()*60 + now.getMinutes();
+    var today = todayStr();
+    state.medications.forEach(function(m){
+      if (!m.remindEnabled) return;
+      m.times.forEach(function(t){
+        var parts = t.split(':');
+        if (parts.length < 2) return;
+        var doseMinutes = parseInt(parts[0])*60 + parseInt(parts[1]);
+        var remindAt = doseMinutes - (m.remindMinutes || 0);
+        var key = m.id+'_'+t+'_'+today;
+        if (nowMinutes === remindAt && !notifiedKeys[key]){
+          notifiedKeys[key] = true;
+          try{
+            new Notification('Medication reminder', { body: m.name+' ('+(m.dosage||'—')+') at '+t, icon:'' });
+          }catch(e){ /* ignore */ }
+        }
+      });
+    });
+    renderReminderBanner();
   }
 
   /* ---------------- CALENDAR ---------------- */
@@ -768,6 +986,7 @@ table.data-table tr:last-child td{border-bottom:none;}
       ]},
       options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'top', labels:{ font:{ size:14 } } } }, scales:{ y:{ ticks:{ font:{ size:14 } } }, x:{ ticks:{ font:{ size:13 } } } } }
     });
+    renderInsights();
   }
 
   function addVital(){
@@ -851,7 +1070,113 @@ table.data-table tr:last-child td{border-bottom:none;}
 
     if (state.medications.length >= 3) tips.push('You\'re managing several medicines — a weekly pill organizer can make this easier.');
 
+    tips.push('Aim for consistent water intake through the day, unless your doctor has told you to limit fluids.');
+    tips.push('Try to take medicines at the same times each day — it helps your body and makes side effects easier to notice.');
+    tips.push('Good, regular sleep supports blood pressure, mood, and blood sugar control alike.');
+    tips.push('Even short daily walks, if your doctor has cleared you for them, support heart and joint health.');
+    tips.push('Keep your emergency info card current — update it whenever a medicine, allergy, or contact changes.');
+    tips.push('Bring your full medicine list (including over-the-counter items) to every appointment.');
+
     list.innerHTML = tips.map(function(t){ return '<li><i class="fa-solid fa-circle-check"></i><span>'+t+'</span></li>'; }).join('');
+  }
+
+  /* ---------------- TRENDS & INSIGHTS ---------------- */
+
+  function renderInsights(){
+    renderAdherenceChart();
+    renderInsightCards();
+  }
+
+  function renderAdherenceChart(){
+    var wrap = document.getElementById('adherenceChartWrap');
+    var empty = document.getElementById('adherenceEmpty');
+    var totalPerDay = allDosesFlat().length;
+
+    if (totalPerDay === 0){
+      wrap.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    wrap.style.display = 'block';
+    empty.style.display = 'none';
+
+    var days = [];
+    for (var i=6;i>=0;i--){
+      var d = new Date();
+      d.setDate(d.getDate()-i);
+      days.push(d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()));
+    }
+    var labels = days.map(fmtDate);
+    var taken = days.map(function(dstr){ return (state.takenLog[dstr]||[]).length; });
+    var scheduled = days.map(function(){ return totalPerDay; });
+
+    var ctx = document.getElementById('adherenceChart').getContext('2d');
+    if (adherenceChartInstance) adherenceChartInstance.destroy();
+    adherenceChartInstance = new Chart(ctx, {
+      type:'bar',
+      data:{ labels:labels, datasets:[
+        { label:'Doses taken', data:taken, backgroundColor:'#22C7A9', borderRadius:6 },
+        { label:'Doses scheduled', data:scheduled, backgroundColor:'#E4E7F5', borderRadius:6 }
+      ]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'top', labels:{ font:{ size:13 } } } },
+        scales:{ y:{ beginAtZero:true, ticks:{ font:{ size:13 }, stepSize:1 } }, x:{ ticks:{ font:{ size:12 } } } }
+      }
+    });
+  }
+
+  function renderInsightCards(){
+    var wrap = document.getElementById('insightCards');
+    var cards = [];
+
+    if (state.profile){
+      var bmi = computeBmi(state.profile.height, state.profile.weight);
+      if (bmi >= 30){
+        cards.push({ title:'Weight-related risk factors', text:'In general population data, a BMI in this range is associated with a higher long-term likelihood of conditions such as type 2 diabetes, high blood pressure, and joint strain. This isn\'t a prediction about you — ask your doctor what, if anything, is worth adjusting.' });
+      } else if (bmi < 18.5 && state.profile.age >= 60){
+        cards.push({ title:'Being underweight in later years', text:'Lower body weight in older adults is sometimes linked to reduced muscle strength and slower recovery from illness. A doctor or dietitian can check whether extra nutrition support would help.' });
+      }
+      if (state.profile.age >= 65){
+        cards.push({ title:'Regular check-ups matter more with age', text:'Many general guidelines suggest more frequent screening for blood pressure, cholesterol, vision, and hearing from the mid-60s onward. Your doctor can confirm what schedule fits you.' });
+      }
+    }
+
+    if (state.vitals.length){
+      var latest = state.vitals[state.vitals.length-1];
+      if (latest.systolic >= 140 || latest.diastolic >= 90){
+        cards.push({ title:'Blood pressure trend to flag', text:'Readings in this range are, in general, associated with higher long-term risk of heart and kidney strain if they persist. It\'s worth mentioning at your next visit, especially if this has come up more than once.' });
+      }
+      if (latest.sugar != null && latest.sugar >= 180){
+        cards.push({ title:'Elevated blood sugar reading', text:'A single high reading can have many causes (meals, stress, illness). If readings in this range keep showing up, your doctor may want to review your management plan.' });
+      }
+    }
+
+    if (state.medications.length >= 4){
+      cards.push({ title:'Managing multiple medicines', text:'Taking several medicines together can, in general, raise the chance of interactions or overlapping side effects. A pharmacist-led medication review can double-check everything works well together.' });
+    }
+
+    var missedRecent = 0;
+    var totalPerDay = allDosesFlat().length;
+    if (totalPerDay > 0){
+      for (var i=1;i<=3;i++){
+        var d = new Date(); d.setDate(d.getDate()-i);
+        var dstr = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+        var takenCount = (state.takenLog[dstr]||[]).length;
+        if (takenCount < totalPerDay) missedRecent++;
+      }
+      if (missedRecent >= 2){
+        cards.push({ title:'A few missed doses recently', text:'Missing doses now and then is common, but gaps can affect how well some medicines work. Turning on reminders above, or using a pill organizer, can help keep things on track.' });
+      }
+    }
+
+    if (cards.length === 0){
+      cards.push({ title:'Nothing flagged right now', text:'Based on what you\'ve logged so far, there\'s nothing in particular to highlight here. Keep tracking to build a fuller picture over time.' });
+    }
+
+    wrap.innerHTML = cards.map(function(c){
+      return '<div class="insight-card"><div class="i-title"><i class="fa-solid fa-triangle-exclamation"></i>'+c.title+'</div><p>'+c.text+'</p></div>';
+    }).join('');
   }
 
   /* ---------------- EMERGENCY CARD ---------------- */
@@ -902,12 +1227,17 @@ table.data-table tr:last-child td{border-bottom:none;}
   });
   document.getElementById('saveMedBtn').addEventListener('click', saveMedication);
   document.querySelector('#medTable tbody').addEventListener('click', function(e){
-    var btn = e.target.closest('[data-remove-med]');
-    if (btn) removeMedication(btn.getAttribute('data-remove-med'));
+    var removeBtn = e.target.closest('[data-remove-med]');
+    if (removeBtn){ removeMedication(removeBtn.getAttribute('data-remove-med')); return; }
+    var remindBtn = e.target.closest('[data-toggle-remind]');
+    if (remindBtn){ toggleReminder(remindBtn.getAttribute('data-toggle-remind')); return; }
+    var infoBtn = e.target.closest('[data-toggle-info]');
+    if (infoBtn){ toggleInfo(infoBtn.getAttribute('data-toggle-info')); return; }
   });
   document.getElementById('todaySchedule').addEventListener('change', function(e){
     if (e.target.matches('[data-dose-key]')) toggleDoseTaken(e.target.getAttribute('data-dose-key'));
   });
+  document.getElementById('enableNotifBtn').addEventListener('click', enableNotifications);
 
   document.getElementById('calPrev').addEventListener('click', function(){ calDate.setMonth(calDate.getMonth()-1); renderCalendar(); });
   document.getElementById('calNext').addEventListener('click', function(){ calDate.setMonth(calDate.getMonth()+1); renderCalendar(); });
@@ -946,6 +1276,10 @@ table.data-table tr:last-child td{border-bottom:none;}
     renderTips();
     renderGlance();
     renderEmergencyCard();
+    renderInsights();
+    updateNotifStatus();
+    setInterval(checkReminders, 30000);
+    setInterval(renderReminderBanner, 60000);
   }
 
   init();
