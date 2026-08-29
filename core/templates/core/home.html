@@ -10,6 +10,324 @@
 {% endblock %}
 
 {% block content %}
+
+
+  <!-- Top Utility Bar: language + auth -->
+  <div class="top-bar">
+    <div class="wrap">
+      <div class="lang-select">
+        <i class="fa-solid fa-globe"></i>
+        <select aria-label="Select language">
+          <option>English</option>
+          <option>Español</option>
+          <option>Français</option>
+          <option>Deutsch</option>
+          <option>中文</option>
+          <option>हिन्दी</option>
+        </select>
+      </div>
+      <div class="top-actions">
+        <a href="login" class="login-link">Log in</a>
+        <a href="signup" class="signup-pill">Sign Up</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav>
+    <div class="wrap nav-content">
+      <a href="home" class="logo">
+        <span class="logo-mark"><i class="fa-solid fa-file-medical"></i></span>
+        <span class="logo-word">Med<span>Folio</span></span>
+      </a>
+
+      <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="home">Home</a></li>
+        <li><a href="features">Features</a></li>
+        <li><a href="security">Security</a></li>
+        <li><a href="signup" class="nav-cta">Get Started Free</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow"><i class="fa-solid fa-shield-heart"></i> Secure medical record tracking</div>
+        <h1>Every health record.<br>One <span class="accent">secure</span> place.</h1>
+        <p class="lead">MedPlan brings your prescriptions, lab results, appointments, and family health history together in a single organized timeline — accessible to you and the care team you trust.</p>
+        <div class="hero-actions">
+          <a href="signup" class="btn-primary"><i class="fa-solid fa-arrow-right-to-bracket"></i> Get Started Free</a>
+          <a href="features" class="btn-ghost"><i class="fa-regular fa-circle-play"></i> See How It Works</a>
+        </div>
+        <div class="hero-trust">
+          <div><i class="fa-solid fa-lock"></i> 256-bit encryption</div>
+          <div><i class="fa-solid fa-user-shield"></i> HIPAA aligned</div>
+          <div><i class="fa-solid fa-star"></i> 4.9/5 from 12,000+ members</div>
+        </div>
+      </div>
+
+      <div class="stack" aria-hidden="true">
+        <div class="rec-card card-back">
+          <div class="bar" style="background:var(--blue);"></div>
+          <h4>Lab Results</h4>
+          <p>Cholesterol Panel — Sept 2026</p>
+          <div class="rec-row"><i style="background:var(--blue);"><i class="fa-solid fa-vial" style="font-size:11px;"></i></i><span>LDL Cholesterol</span><small>OK</small></div>
+          <div class="rec-row"><i style="background:var(--mint);"><i class="fa-solid fa-vial" style="font-size:11px;"></i></i><span>HDL Cholesterol</span><small>OK</small></div>
+        </div>
+        <div class="rec-card card-mid">
+          <div class="bar" style="background:var(--mint);"></div>
+          <h4>Medications</h4>
+          <p>Active prescriptions</p>
+          <div class="rec-row"><i style="background:var(--purple);"><i class="fa-solid fa-pills" style="font-size:11px;"></i></i><span>Metformin 500mg</span><small>8:00</small></div>
+          <div class="rec-row"><i style="background:var(--blue);"><i class="fa-solid fa-pills" style="font-size:11px;"></i></i><span>Lisinopril 10mg</span><small>20:00</small></div>
+        </div>
+        <div class="rec-card card-front">
+          <div class="bar" style="background:var(--purple);"></div>
+          <h4>Health Timeline</h4>
+          <p>Recent activity</p>
+          <div class="rec-row"><i style="background:var(--purple);"><i class="fa-solid fa-stethoscope" style="font-size:11px;"></i></i><span>Annual Checkup</span><small>04.12</small></div>
+          <div class="rec-row"><i style="background:var(--blue);"><i class="fa-solid fa-syringe" style="font-size:11px;"></i></i><span>Flu Vaccine</span><small>02.28</small></div>
+          <div class="rec-row"><i style="background:var(--mint);"><i class="fa-solid fa-notes-medical" style="font-size:11px;"></i></i><span>Doctor's Note</span><small>01.15</small></div>
+        </div>
+        <div class="float-badge badge-1"><i class="fa-solid fa-circle-check"></i> Synced securely</div>
+        <div class="float-badge badge-2"><i class="fa-solid fa-heart-pulse"></i> Vitals up to date</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip -->
+  <div class="trust-strip">
+    <div class="wrap">
+      <div class="trust-item"><span class="ic"><i class="fa-solid fa-lock"></i></span> 256-bit Encryption</div>
+      <div class="trust-item"><span class="ic"><i class="fa-solid fa-user-shield"></i></span> HIPAA Compliant</div>
+      <div class="trust-item"><span class="ic"><i class="fa-solid fa-users"></i></span> 50,000+ Members</div>
+      <div class="trust-item"><span class="ic"><i class="fa-solid fa-cloud-arrow-up"></i></span> Daily Secure Backups</div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow"><i class="fa-solid fa-layer-group"></i> Everything in one dashboard</div>
+        <h2>Built for how you actually manage your health</h2>
+        <p>From your first checkup to your latest lab result, MedPlan keeps every detail organized, searchable, and ready to share with the people who need it.</p>
+      </div>
+
+      <div class="features-layout">
+        <div class="dash-panel">
+          <div class="dash-topbar">
+            <span class="dash-dot" style="background:#FF6B6B;"></span>
+            <span class="dash-dot" style="background:#FFC960;"></span>
+            <span class="dash-dot" style="background:#22C7A9;"></span>
+            <span>www.medplan.com</span>
+          </div>
+          <div class="dash-body">
+            <h4>Recent Records</h4>
+            <div class="sub">Auto-sorted by date, newest first</div>
+            <div class="dash-list">
+              <div class="rec-row"><i style="background:var(--purple);"><i class="fa-solid fa-file-waveform" style="font-size:11px;"></i></i><span>Blood Pressure Log</span><small>Today</small></div>
+              <div class="rec-row"><i style="background:var(--blue);"><i class="fa-solid fa-vial" style="font-size:11px;"></i></i><span>A1C Lab Report</span><small>2 days ago</small></div>
+              <div class="rec-row"><i style="background:var(--mint);"><i class="fa-solid fa-calendar-check" style="font-size:11px;"></i></i><span>Cardiology Follow-up</span><small>Sept 18</small></div>
+              <div class="rec-row"><i style="background:var(--purple);"><i class="fa-solid fa-pills" style="font-size:11px;"></i></i><span>Refill: Atorvastatin</span><small>Sept 12</small></div>
+            </div>
+            <div class="vitals">
+              <div class="sub">Vitals trend — last 6 check-ins</div>
+              <div class="bars">
+                <i style="height:40%;"></i><i style="height:55%;"></i><i style="height:48%;"></i>
+                <i style="height:70%;"></i><i style="height:62%;"></i><i style="height:80%;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <div class="grid-item feature-card">
+            <div class="ic"><i class="fa-solid fa-file-medical"></i></div>
+            <h4>Health Records</h4>
+            <p>Store prescriptions, diagnoses, and doctor's notes in one searchable timeline.</p>
+          </div>
+          <div class="grid-item feature-card">
+            <div class="ic"><i class="fa-solid fa-vial"></i></div>
+            <h4>Lab Results</h4>
+            <p>Upload lab reports and automatically track trends over time.</p>
+          </div>
+          <div class="grid-item feature-card">
+            <div class="ic"><i class="fa-solid fa-pills"></i></div>
+            <h4>Medication Tracker</h4>
+            <p>Never miss a dose with reminders and refill alerts.</p>
+          </div>
+          <div class="grid-item feature-card">
+            <div class="ic"><i class="fa-solid fa-calendar-check"></i></div>
+            <h4>Appointments</h4>
+            <p>Schedule visits and get notified before they happen.</p>
+          </div>
+          <div class="grid-item feature-card">
+            <div class="ic"><i class="fa-solid fa-people-roof"></i></div>
+            <h4>Family History</h4>
+            <p>Track hereditary conditions across your whole family tree.</p>
+          </div>
+          <div class="grid-item feature-card">
+            <div class="ic"><i class="fa-solid fa-id-card-clip"></i></div>
+            <h4>Emergency Card</h4>
+            <p>Share critical health info instantly, even without signal.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section testimonial-section" id="stories">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow"><i class="fa-solid fa-comment-medical"></i> Real stories</div>
+        <h2>Trusted by patients and care teams</h2>
+        <p>People use MedPlan to stay on top of chronic conditions, coordinate family care, and walk into every appointment prepared.</p>
+      </div>
+
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-quote-mark">“</div>
+          <p class="quote">Being able to see my glucose trends alongside my medication schedule finally made my diabetes feel manageable instead of overwhelming.</p>
+          <div class="testi-person">
+            <div class="avatar">AR</div>
+            <div><strong>Aditi R.</strong><span>Managing Type 2 Diabetes</span></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-quote-mark">“</div>
+          <p class="quote">Patients arrive with their full history organized and ready to share. It saves us both time and gets straight to what matters.</p>
+          <div class="testi-person">
+            <div class="avatar">SK</div>
+            <div><strong>Dr. Sameer Kulkarni</strong><span>Family Physician</span></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-quote-mark">“</div>
+          <p class="quote">Tracking my father's five medications used to live in my head. Now reminders and refill alerts do the remembering for me.</p>
+          <div class="testi-person">
+            <div class="avatar">MT</div>
+            <div><strong>Marcus T.</strong><span>Caregiver for aging parent</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security -->
+  <section class="section security-section" id="security">
+    <div class="wrap">
+      <div class="shield-wrap">
+        <div class="shield-ring ring-1"></div>
+        <div class="shield-ring ring-2"></div>
+        <div class="shield-core"><i class="fa-solid fa-shield-heart"></i></div>
+        <div class="orbit-icon oi-1"><i class="fa-solid fa-lock"></i></div>
+        <div class="orbit-icon oi-2"><i class="fa-solid fa-key"></i></div>
+        <div class="orbit-icon oi-3"><i class="fa-solid fa-user-check"></i></div>
+        <div class="orbit-icon oi-4"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+      </div>
+
+      <div class="security-copy">
+        <div class="eyebrow"><i class="fa-solid fa-lock"></i> Privacy by design</div>
+        <h2>Your health data, protected at every step</h2>
+        <p>MedPlan is built around one principle: your medical history belongs to you. Every record is encrypted, every share is your decision.</p>
+        <ul class="sec-list">
+          <li>
+            <span class="ic"><i class="fa-solid fa-lock"></i></span>
+            <div><strong>End-to-end encryption</strong><span>Every record you upload is encrypted in transit and at rest.</span></div>
+          </li>
+          <li>
+            <span class="ic"><i class="fa-solid fa-scale-balanced"></i></span>
+            <div><strong>HIPAA & GDPR aligned</strong><span>Data handling practices built to meet healthcare privacy standards.</span></div>
+          </li>
+          <li>
+            <span class="ic"><i class="fa-solid fa-user-check"></i></span>
+            <div><strong>You control access</strong><span>Choose exactly who — a doctor, a family member, a caregiver — can view or edit each record.</span></div>
+          </li>
+          <li>
+            <span class="ic"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+            <div><strong>Automatic backups</strong><span>Your records are securely backed up every day, so nothing is ever lost.</span></div>
+          </li>
+        </ul>
+        <a href="signup" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Create Your Free Account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="padding-top:0;">
+    <div class="wrap">
+      <div class="cta-banner">
+        <h2>Start your health timeline today</h2>
+        <p>Free to get started. No credit card required.</p>
+        <a href="signup" class="btn-primary"><i class="fa-solid fa-arrow-right-to-bracket"></i> Get Started Free</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-section">
+    <div class="wrap">
+      <div class="footer-content">
+        <div class="footer-col about-col">
+          <div class="footer-logo">
+            <span class="logo-mark"><i class="fa-solid fa-file-medical"></i></span>
+            <span>MedPlan</span>
+          </div>
+          <p>MedPlan helps individuals and families organize, secure, and share their medical history — from records and labs to medications and appointments — all in one trusted place.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>Product</h3>
+          <a href="features" class="flink">Features</a>
+          <a href="security" class="flink">Security</a>
+          <a href="Pricing" class="flink">Pricing</a>
+          <a href="Mobile" class="flink">Mobile App</a>
+        </div>
+
+        <div class="footer-col">
+          <h3>Company</h3>
+          <a href="About" class="flink">About Us</a>
+          <a href="Career" class="flink">Careers</a>
+          <a href="Blog" class="flink">Blog</a>
+          <a href="Contact" class="flink">Contact</a>
+        </div>
+
+        <div class="footer-col">
+          <h3>Support</h3>
+          <a href="Help" class="flink">Help Center</a>
+          <a href="Privacy" class="flink">Privacy Policy</a>
+          <a href="Terms" class="flink">Terms of Service</a>
+          <a href="Notice" class="flink">HIPAA Notice</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 MedPlan.</span>
+        <div class="legal-links">
+          <a href="privacy">Privacy Policy</a>
+          <a href="terms">Terms and Conditions</a>
+          <a href="sitemap">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+
     <a href="{% url 'login' %}" id="home_links" class="btn btn-danger btn active">Login</a>
     <a href="{% url 'register' %}" id="home_links" class="btn btn-dark btn active">Register</a>
 {% endblock %}
