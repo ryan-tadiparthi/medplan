@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+    Upload Prescription
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/my_prescription.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>My Prescriptions</h1>
+
+    {% for prescription in prescriptions %}
+
+        <div>
+            <img src="{{ prescription.image.url }}" width="300">
+
+            <h3>Extracted Text</h3>
+
+            <p>
+                {{ prescription.extracted_text|linebreaks }}
+            </p>
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>You haven't uploaded any prescriptions yet.</p>
+
+    {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'core/js/my_prescription.js' %}"></script>
+{% endblock %}
