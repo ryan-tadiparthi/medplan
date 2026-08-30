@@ -517,12 +517,12 @@
           <div id="addGuardianForm" style="display:none;margin-top:22px;">
             <div class="form-grid">
               <div class="field"><label for="gName">Name</label><input type="text" id="gName" placeholder="e.g. Priya Sharma"></div>
-              <div class="field"><label for="gRel">Relationship</label><input type="text" id="gRel" placeholder="e.g. Daughter"></div>
               <div class="field"><label for="gPhone">Phone number</label><input type="tel" id="gPhone" placeholder="e.g. +91 98765 43210"></div>
               <div class="field"><label for="gEmail">Email (optional)</label><input type="email" id="gEmail" placeholder="e.g. priya@example.com"></div>
+              <div class="field"><label for="gRel">Custom Message</label><input type="text" id="gRel" placeholder="e.g. Text.."></div>
             </div>
             <div class="error-text" id="guardianError">Please add a name and phone number.</div>
-            <button class="btn btn-primary btn-sm" id="saveGuardianBtn"><i class="fa-solid fa-check"></i> Save guardian</button>
+            <button class="btn btn-primary btn-sm" id="saveGuardianBtn"><i class="fa-solid fa-check"></i><a href="{% url 'send_guardian_invitation' %}">Save guardian</a></button>
           </div>
         </section>
       

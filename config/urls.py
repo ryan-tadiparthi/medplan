@@ -17,7 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
-from users.views import register, health_profile
+from users.views import (
+    register,
+    health_profile,
+    user_login,
+    guardian_dashboard,
+    send_guardian_invitation,
+)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -26,11 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('register/', register, name='register'),
-    path(
-        'login/',
-        auth_views.LoginView.as_view(template_name='users/login.html'),
-        name='login'
-    ),
+    path('login/', user_login, name='login'),
 
     path(
         'logout/',
@@ -39,6 +41,8 @@ urlpatterns = [
     ),
 
     path('health-profile/', health_profile, name='health_profile'),
+    path('guardian-dashboard/', guardian_dashboard, name='guardian_dashboard'),
+    path('guardian-invitation/', send_guardian_invitation, name='send_guardian_invitation'),
 ]
 
 

@@ -89,6 +89,9 @@ def upload_prescription(request):
 @login_required
 def my_prescriptions(request):
 
+    if request.user.profile.role != "patient":
+        return redirect('guardian_dashboard')
+
     prescriptions = Prescription.objects.filter(
         user=request.user
     ).prefetch_related('medications').order_by('-uploaded_at')
