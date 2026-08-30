@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import PrescriptionForm
 from .models import Prescription, Medication
+from users.models import HealthProfile
 from django.contrib.auth.decorators import login_required
 import os
 import requests
@@ -87,8 +88,21 @@ def upload_prescription(request):
 
 @login_required
 def my_prescriptions(request):
+
     prescriptions = Prescription.objects.filter(
         user=request.user
     ).prefetch_related('medications').order_by('-uploaded_at')
 
-    return render(request, 'core/my_prescriptions.html', {'prescriptions': prescriptions})
+    try:
+        health_profile = request.user.health_profile
+    except HealthProfile.DoesNotExist:
+        health_profile = None
+
+    return render(
+        request,
+        'core/my_prescriptions.html',
+        {
+            'prescriptions': prescriptions,
+            'health_profile': health_profile,
+        }
+    )

@@ -107,192 +107,597 @@
     </div> -->
 
     
-<main class="wrap" style="padding-top:32px;">
+    <main class="wrap" style="padding-top:32px;">
 
-  <!-- TODAY AT A GLANCE -->
-  <section class="glance" id="glanceSection">
-    <h2><i class="fa-solid fa-sun"></i> Today at a glance</h2>
-    <div class="glance-grid" id="glanceGrid"></div>
-  </section>
+        <!-- TODAY AT A GLANCE -->
+        <section class="glance" id="glanceSection">
+          <h2><i class="fa-solid fa-sun"></i> Today at a glance</h2>
+          <div class="glance-grid" id="glanceGrid"></div>
+        </section>
+      
+        <!-- PROFILE -->
+        ```html
+<section class="card" id="profileSection">
 
-  <!-- PROFILE -->
-  <section class="card" id="profileSection">
-    <h2><i class="fa-solid fa-user-doctor"></i> Your health profile</h2>
-    <p class="sub">Keep your age, height, and weight up to date so your charts stay accurate.</p>
+    <h2>
+        <i class="fa-solid fa-user-doctor"></i>
+        Your health profile
+    </h2>
 
-    <div id="profileFormWrap">
-      <div class="form-grid">
-        <div class="field">
-          <label for="pName">Full name</label>
-          <input type="text" id="pName" placeholder="Your name">
+    <p class="sub">
+        Keep your age, height, and weight up to date so your charts stay accurate.
+    </p>
+
+
+    <!-- Django Health Profile Form -->
+
+    <form
+        method="POST"
+        action="{% url 'health_profile' %}"
+        id="profileForm"
+    >
+
+        {% csrf_token %}
+
+
+        <div id="profileFormWrap">
+
+            <div class="form-grid">
+
+                <!-- Full Name -->
+
+                <div class="field">
+
+                    <label for="pName">
+                        Full name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="pName"
+                        name="full_name"
+                        value="{{ health_profile.full_name|default:'' }}"
+                        placeholder="Your name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Age -->
+
+                <div class="field">
+
+                    <label for="pAge">
+                        Age (years)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="pAge"
+                        name="age"
+                        min="0"
+                        max="120"
+                        value="{{ health_profile.age|default:'' }}"
+                        placeholder="e.g. 68"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Height -->
+
+                <div class="field">
+
+                    <label for="pHeight">
+                        Height (cm)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="pHeight"
+                        name="height"
+                        min="30"
+                        max="250"
+                        step="0.01"
+                        value="{{ health_profile.height|default:'' }}"
+                        placeholder="e.g. 165"
+                        required
+                    >
+
+                    <div class="hint">
+                        Tip: 1 foot = about 30 cm.
+                    </div>
+
+                </div>
+
+
+                <!-- Weight -->
+
+                <div class="field">
+
+                    <label for="pWeight">
+                        Weight (kg)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="pWeight"
+                        name="weight"
+                        min="2"
+                        max="400"
+                        step="0.01"
+                        value="{{ health_profile.weight|default:'' }}"
+                        placeholder="e.g. 70"
+                        required
+                    >
+
+                    <div class="hint">
+                        Tip: 1 pound = about 0.45 kg.
+                    </div>
+
+                </div>
+
+
+                <!-- Allergies -->
+
+                <div class="field">
+
+                    <label for="pAllergies">
+                        Allergies
+                    </label>
+
+                    <input
+                        type="text"
+                        id="pAllergies"
+                        name="allergies"
+                        value="{{ health_profile.allergies|default:'' }}"
+                        placeholder="e.g. Penicillin, peanuts"
+                    >
+
+                </div>
+
+
+                <!-- Existing Conditions -->
+
+                <div class="field">
+
+                    <label for="pConditions">
+                        Existing conditions
+                    </label>
+
+                    <input
+                        type="text"
+                        id="pConditions"
+                        name="existing_conditions"
+                        value="{{ health_profile.existing_conditions|default:'' }}"
+                        placeholder="e.g. Type 2 diabetes"
+                    >
+
+                </div>
+
+
+                <!-- Systolic Blood Pressure -->
+
+                
+            </div>
+
+
+            <div class="error-text" id="profileError">
+
+                Please fill in all required health information.
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                id="saveProfileBtn"
+            >
+
+                <i class="fa-solid fa-floppy-disk"></i>
+                <a href="{% url 'health_profile' %}">Edit Profile</a>
+
+            </button>
+
         </div>
-        <div class="field">
-          <label for="pAge">Age (years)</label>
-          <input type="number" id="pAge" min="0" max="120" placeholder="e.g. 68">
+
+    </form>
+
+
+    <!-- Profile Summary -->
+
+    <div
+        id="profileSummaryWrap"
+        style="display:none;margin-top:8px;"
+    >
+
+        <div
+            class="stat-grid"
+            id="statGrid"
+        ></div>
+
+
+        <div
+            class="chart-toggle"
+            id="chartToggle"
+        >
+
+            <button
+                data-metric="weight"
+                class="active"
+            >
+                Weight
+            </button>
+
+            <button
+                data-metric="height"
+            >
+                Height
+            </button>
+
+            <button
+                data-metric="bmi"
+            >
+                BMI
+            </button>
+
+            <button
+                data-metric="age"
+            >
+                Age
+            </button>
+
         </div>
-        <div class="field">
-          <label for="pHeight">Height (cm)</label>
-          <input type="number" id="pHeight" min="30" max="250" placeholder="e.g. 165">
-          <div class="hint">Tip: 1 foot = about 30 cm.</div>
+
+
+        <div class="chart-wrap">
+
+            <canvas id="profileChart"></canvas>
+
         </div>
-        <div class="field">
-          <label for="pWeight">Weight (kg)</label>
-          <input type="number" id="pWeight" min="2" max="400" placeholder="e.g. 70">
-          <div class="hint">Tip: 1 pound = about 0.45 kg.</div>
+
+
+        <div style="margin-top:20px;">
+
+            <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                id="editProfileBtn"
+            >
+
+                <i class="fa-solid fa-pen"></i>
+                Update my numbers
+
+            </button>
+
         </div>
-        <div class="field">
-          <label for="pAllergies">Allergies</label>
-          <input type="text" id="pAllergies" placeholder="e.g. Penicillin, peanuts">
+
+    </div>
+
+</section>
+```
+
+      
+        <!-- MEDICATIONS + CALENDAR -->
+        <section class="card" id="medsSection">
+          <h2><i class="fa-solid fa-pills"></i> Medications and appointments</h2>
+          <p class="sub">Add your medicines and doctor visits — they'll show up on the calendar automatically, with optional reminders.</p>
+      
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+            <button class="btn btn-secondary btn-sm" id="enableNotifBtn"><i class="fa-solid fa-bell"></i> Enable reminder notifications</button>
+            <span id="notifStatus" style="align-self:center;font-size:0.85rem;color:var(--ink-soft);"></span>
+          </div>
+      
+          <div id="reminderBanner"></div>
+      
+          <div class="section-label">Today's schedule</div>
+          <div id="todaySchedule" style="margin-bottom:26px;"></div>
+      
+          <div class="section-label">Your medications</div>
+          <table class="data-table" id="medTable" style="margin-bottom:16px;">
+            <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Times</th>
+                    <th>Notes</th>
+                    <th>Remind</th>
+                    <th>Info</th>
+                    <th></th>
+                </tr>
+            </thead>
+        
+            <tbody>
+        
+                {% for prescription in prescriptions %}
+        
+                    {% for medication in prescription.medications.all %}
+        
+                        <tr>
+        
+                            <td>
+                                <strong>{{ medication.name }}</strong>
+        
+                                {% if medication.strength %}
+                                    <br>
+                                    <small>{{ medication.strength }}</small>
+                                {% endif %}
+                            </td>
+        
+                            <td>
+                                {{ medication.dosage }}
+                            </td>
+        
+                            <td>
+                                {{ medication.frequency }}
+        
+                                {% if medication.timing %}
+                                    <br>
+                                    <small>{{ medication.timing }}</small>
+                                {% endif %}
+                            </td>
+        
+                            <td>
+                                {% if medication.instructions %}
+                                    {{ medication.instructions }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+        
+                            <td>
+                                —
+                            </td>
+        
+                            <td>
+                                —
+                            </td>
+        
+                            <td>
+                            </td>
+        
+                        </tr>
+        
+                    {% endfor %}
+        
+                {% empty %}
+        
+                    <tr>
+                        <td colspan="7">
+                            No medications found.
+                        </td>
+                    </tr>
+        
+                {% endfor %}
+        
+            </tbody>
+        </table>
+          <p class="side-effect-note" style="margin-bottom:16px;"><i class="fa-solid fa-circle-info"></i> <strong>About the "Info" column:</strong> it shows general, commonly-known side effects for widely used medicines — not a full list, and not specific to your dose or health history. Always check the leaflet that came with your medicine or ask your pharmacist or doctor.</p>
+          <button class="btn btn-secondary btn-sm" id="addMedToggle" style="margin-bottom:22px;"><i class="fa-solid fa-plus"></i> Add a medicine</button>
+      
+          <div id="addMedForm" style="display:none;margin-bottom:30px;">
+            <div class="form-grid">
+              <div class="field"><label for="mName">Medicine name</label><input type="text" id="mName" placeholder="e.g. Metformin"></div>
+              <div class="field"><label for="mDosage">Dosage</label><input type="text" id="mDosage" placeholder="e.g. 500mg"></div>
+              <div class="field"><label for="mTimes">Times of day</label><input type="text" id="mTimes" placeholder="e.g. 08:00, 20:00"><div class="hint">Separate multiple times with commas.</div></div>
+              <div class="field"><label for="mNotes">Notes (optional)</label><input type="text" id="mNotes" placeholder="e.g. Take with food"></div>
+              <div class="field"><label for="mRemindMins">Remind me before (minutes)</label><input type="number" id="mRemindMins" min="0" max="180" placeholder="e.g. 10" value="0"><div class="hint">0 means remind right at dose time.</div></div>
+              <div class="field-checkbox"><input type="checkbox" id="mRemind" checked><label for="mRemind">Turn on reminders for this medicine</label></div>
+            </div>
+            <div class="error-text" id="medError">Please add a medicine name and at least one time.</div>
+            <button class="btn btn-primary btn-sm" id="saveMedBtn"><i class="fa-solid fa-check"></i> Save medicine</button>
+          </div>
+      
+          <div class="section-label">Calendar</div>
+          <div class="cal-header">
+            <div class="cal-nav"><button id="calPrev" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button></div>
+            <div class="cal-month" id="calMonthLabel"></div>
+            <div class="cal-nav"><button id="calNext" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button></div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div style="display:flex;gap:18px;margin-top:12px;font-size:0.85rem;color:var(--ink-soft);">
+            <span><span class="cal-dots"><span class="dot-med"></span></span> Medicine day</span>
+            <span><span class="cal-dots"><span class="dot-appt"></span></span> Appointment</span>
+          </div>
+      
+          <div class="day-detail" id="dayDetail" style="display:none;"></div>
+        </section>
+      
+        <!-- GUARDIANS -->
+        <section class="card" id="guardianSection">
+          <h2><i class="fa-solid fa-people-roof"></i> Guardians and emergency contacts</h2>
+          <p class="sub">Add the people who should be reachable if you ever need help.</p>
+      
+          <div class="guardian-grid" id="guardianGrid"></div>
+          <button class="btn btn-secondary btn-sm" id="addGuardianToggle"><i class="fa-solid fa-plus"></i> Add a guardian</button>
+      
+          <div id="addGuardianForm" style="display:none;margin-top:22px;">
+            <div class="form-grid">
+              <div class="field"><label for="gName">Name</label><input type="text" id="gName" placeholder="e.g. Priya Sharma"></div>
+              <div class="field"><label for="gRel">Relationship</label><input type="text" id="gRel" placeholder="e.g. Daughter"></div>
+              <div class="field"><label for="gPhone">Phone number</label><input type="tel" id="gPhone" placeholder="e.g. +91 98765 43210"></div>
+              <div class="field"><label for="gEmail">Email (optional)</label><input type="email" id="gEmail" placeholder="e.g. priya@example.com"></div>
+            </div>
+            <div class="error-text" id="guardianError">Please add a name and phone number.</div>
+            <button class="btn btn-primary btn-sm" id="saveGuardianBtn"><i class="fa-solid fa-check"></i> Save guardian</button>
+          </div>
+        </section>
+      
+        <!-- VITALS -->
+        
+<section class="card" id="vitalsSection">
+
+    <h2>
+        <i class="fa-solid fa-heart-pulse"></i>
+        Blood pressure and sugar log
+    </h2>
+
+    <p class="sub">
+        Optional — track these over time if your doctor recommends it.
+        This is not medical advice.
+    </p>
+
+
+    <form
+        method="POST"
+        action="{% url 'health_profile' %}"
+        id="vitalsForm"
+    >
+
+        {% csrf_token %}
+
+
+        <div class="form-grid">
+
+            <!-- Systolic -->
+
+            <div class="field">
+
+                <label for="vSystolic">
+                    Systolic (top number)
+                </label>
+
+                <input
+                    type="number"
+                    id="vSystolic"
+                    name="systolic"
+                    min="50"
+                    max="260"
+                    value="{{ health_profile.systolic|default:'' }}"
+                    placeholder="e.g. 120"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Diastolic -->
+
+            <div class="field">
+
+                <label for="vDiastolic">
+                    Diastolic (bottom number)
+                </label>
+
+                <input
+                    type="number"
+                    id="vDiastolic"
+                    name="diastolic"
+                    min="30"
+                    max="160"
+                    value="{{ health_profile.diastolic|default:'' }}"
+                    placeholder="e.g. 80"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Blood Sugar -->
+
+            <div class="field">
+
+                <label for="vSugar">
+                    Blood sugar (mg/dL, optional)
+                </label>
+
+                <input
+                    type="number"
+                    id="vSugar"
+                    name="blood_sugar"
+                    min="0"
+                    max="600"
+                    step="0.01"
+                    value="{{ health_profile.blood_sugar|default:'' }}"
+                    placeholder="e.g. 100"
+                >
+
+            </div>
+
         </div>
-        <div class="field">
-          <label for="pConditions">Existing conditions</label>
-          <input type="text" id="pConditions" placeholder="e.g. Type 2 diabetes">
+
+
+        <div class="error-text" id="vitalsError">
+
+            Please enter both blood pressure numbers.
+
         </div>
-      </div>
-      <div class="error-text" id="profileError">Please fill in name, age, height, and weight.</div>
-      <button class="btn btn-primary" id="saveProfileBtn"><i class="fa-solid fa-floppy-disk"></i> Save profile</button>
+
+
+        <button
+            type="submit"
+            class="btn btn-secondary btn-sm"
+            id="addVitalBtn"
+            style="margin-bottom:22px;"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+            Add reading
+
+        </button>
+
+    </form>
+
+
+    <div
+        class="chart-wrap"
+        id="vitalsChartWrap"
+        style="display:none;"
+    >
+
+        <canvas id="vitalsChart"></canvas>
+
     </div>
 
-    <div id="profileSummaryWrap" style="display:none;margin-top:8px;">
-      <div class="stat-grid" id="statGrid"></div>
 
-      <div class="chart-toggle" id="chartToggle">
-        <button data-metric="weight" class="active">Weight</button>
-        <button data-metric="height">Height</button>
-        <button data-metric="bmi">BMI</button>
-        <button data-metric="age">Age</button>
-      </div>
-      <div class="chart-wrap"><canvas id="profileChart"></canvas></div>
+    <p
+        class="empty-note"
+        id="vitalsEmpty"
+    >
+        No readings yet — add your first one above.
+    </p>
 
-      <div style="margin-top:20px;">
-        <button class="btn btn-secondary btn-sm" id="editProfileBtn"><i class="fa-solid fa-pen"></i> Update my numbers</button>
-      </div>
-    </div>
-  </section>
+</section>
 
-  <!-- MEDICATIONS + CALENDAR -->
-  <section class="card" id="medsSection">
-    <h2><i class="fa-solid fa-pills"></i> Medications and appointments</h2>
-    <p class="sub">Add your medicines and doctor visits — they'll show up on the calendar automatically, with optional reminders.</p>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
-      <button class="btn btn-secondary btn-sm" id="enableNotifBtn"><i class="fa-solid fa-bell"></i> Enable reminder notifications</button>
-      <span id="notifStatus" style="align-self:center;font-size:0.85rem;color:var(--ink-soft);"></span>
-    </div>
-
-    <div id="reminderBanner"></div>
-
-    <div class="section-label">Today's schedule</div>
-    <div id="todaySchedule" style="margin-bottom:26px;"></div>
-
-    <div class="section-label">Your medications</div>
-    <table class="data-table" id="medTable" style="margin-bottom:16px;">
-      <thead><tr><th>Medicine</th><th>Dosage</th><th>Times</th><th>Notes</th><th>Remind</th><th>Info</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <p class="side-effect-note" style="margin-bottom:16px;"><i class="fa-solid fa-circle-info"></i> <strong>About the "Info" column:</strong> it shows general, commonly-known side effects for widely used medicines — not a full list, and not specific to your dose or health history. Always check the leaflet that came with your medicine or ask your pharmacist or doctor.</p>
-    <button class="btn btn-secondary btn-sm" id="addMedToggle" style="margin-bottom:22px;"><i class="fa-solid fa-plus"></i> Add a medicine</button>
-
-    <div id="addMedForm" style="display:none;margin-bottom:30px;">
-      <div class="form-grid">
-        <div class="field"><label for="mName">Medicine name</label><input type="text" id="mName" placeholder="e.g. Metformin"></div>
-        <div class="field"><label for="mDosage">Dosage</label><input type="text" id="mDosage" placeholder="e.g. 500mg"></div>
-        <div class="field"><label for="mTimes">Times of day</label><input type="text" id="mTimes" placeholder="e.g. 08:00, 20:00"><div class="hint">Separate multiple times with commas.</div></div>
-        <div class="field"><label for="mNotes">Notes (optional)</label><input type="text" id="mNotes" placeholder="e.g. Take with food"></div>
-        <div class="field"><label for="mRemindMins">Remind me before (minutes)</label><input type="number" id="mRemindMins" min="0" max="180" placeholder="e.g. 10" value="0"><div class="hint">0 means remind right at dose time.</div></div>
-        <div class="field-checkbox"><input type="checkbox" id="mRemind" checked><label for="mRemind">Turn on reminders for this medicine</label></div>
-      </div>
-      <div class="error-text" id="medError">Please add a medicine name and at least one time.</div>
-      <button class="btn btn-primary btn-sm" id="saveMedBtn"><i class="fa-solid fa-check"></i> Save medicine</button>
-    </div>
-
-    <div class="section-label">Calendar</div>
-    <div class="cal-header">
-      <div class="cal-nav"><button id="calPrev" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button></div>
-      <div class="cal-month" id="calMonthLabel"></div>
-      <div class="cal-nav"><button id="calNext" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button></div>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div style="display:flex;gap:18px;margin-top:12px;font-size:0.85rem;color:var(--ink-soft);">
-      <span><span class="cal-dots"><span class="dot-med"></span></span> Medicine day</span>
-      <span><span class="cal-dots"><span class="dot-appt"></span></span> Appointment</span>
-    </div>
-
-    <div class="day-detail" id="dayDetail" style="display:none;"></div>
-  </section>
-
-  <!-- GUARDIANS -->
-  <section class="card" id="guardianSection">
-    <h2><i class="fa-solid fa-people-roof"></i> Guardians and emergency contacts</h2>
-    <p class="sub">Add the people who should be reachable if you ever need help.</p>
-
-    <div class="guardian-grid" id="guardianGrid"></div>
-    <button class="btn btn-secondary btn-sm" id="addGuardianToggle"><i class="fa-solid fa-plus"></i> Add a guardian</button>
-
-    <div id="addGuardianForm" style="display:none;margin-top:22px;">
-      <div class="form-grid">
-        <div class="field"><label for="gName">Name</label><input type="text" id="gName" placeholder="e.g. Priya Sharma"></div>
-        <div class="field"><label for="gRel">Relationship</label><input type="text" id="gRel" placeholder="e.g. Daughter"></div>
-        <div class="field"><label for="gPhone">Phone number</label><input type="tel" id="gPhone" placeholder="e.g. +91 98765 43210"></div>
-        <div class="field"><label for="gEmail">Email (optional)</label><input type="email" id="gEmail" placeholder="e.g. priya@example.com"></div>
-      </div>
-      <div class="error-text" id="guardianError">Please add a name and phone number.</div>
-      <button class="btn btn-primary btn-sm" id="saveGuardianBtn"><i class="fa-solid fa-check"></i> Save guardian</button>
-    </div>
-  </section>
-
-  <!-- VITALS -->
-  <section class="card" id="vitalsSection">
-    <h2><i class="fa-solid fa-heart-pulse"></i> Blood pressure and sugar log</h2>
-    <p class="sub">Optional — track these over time if your doctor recommends it. This is not medical advice.</p>
-
-    <div class="form-grid">
-      <div class="field"><label for="vSystolic">Systolic (top number)</label><input type="number" id="vSystolic" min="50" max="260" placeholder="e.g. 120"></div>
-      <div class="field"><label for="vDiastolic">Diastolic (bottom number)</label><input type="number" id="vDiastolic" min="30" max="160" placeholder="e.g. 80"></div>
-      <div class="field"><label for="vSugar">Blood sugar (mg/dL, optional)</label><input type="number" id="vSugar" min="0" max="600" placeholder="e.g. 100"></div>
-    </div>
-    <div class="error-text" id="vitalsError">Please enter both blood pressure numbers.</div>
-    <button class="btn btn-secondary btn-sm" id="addVitalBtn" style="margin-bottom:22px;"><i class="fa-solid fa-plus"></i> Add reading</button>
-
-    <div class="chart-wrap" id="vitalsChartWrap" style="display:none;"><canvas id="vitalsChart"></canvas></div>
-    <p class="empty-note" id="vitalsEmpty">No readings yet — add your first one above.</p>
-  </section>
-
-  <!-- TRENDS & INSIGHTS -->
-  <section class="card" id="insightsSection">
-    <h2><i class="fa-solid fa-chart-line"></i> Trends &amp; insights</h2>
-    <p class="sub">Patterns from what you've logged, plus general educational notes — not a diagnosis or a prediction about you personally.</p>
-
-    <div class="section-label">Medication adherence — last 7 days</div>
-    <div class="chart-wrap" id="adherenceChartWrap" style="height:230px;display:none;"><canvas id="adherenceChart"></canvas></div>
-    <p class="empty-note" id="adherenceEmpty">Add medicines and check them off in "Today's schedule" to see your adherence trend here.</p>
-
-    <div class="section-label" style="margin-top:26px;">Things worth keeping an eye on</div>
-    <div id="insightCards"></div>
-
-    <div class="disclaimer-box">
-      <i class="fa-solid fa-circle-info"></i>
-      <span>This section shares general, population-level health education based on common medical guidance. It does not predict your future health, diagnose anything, or replace your doctor's judgment. Always discuss changes in your readings or medicines with a healthcare professional.</span>
-    </div>
-  </section>
-
-  <!-- HEALTH TIPS -->
-  <section class="card" id="tipsSection">
-    <h2><i class="fa-solid fa-lightbulb"></i> Helpful tips for you</h2>
-    <p class="sub">General, friendly suggestions based on what you've entered. Always check with your doctor before making changes.</p>
-    <ul class="tip-list" id="tipList"></ul>
-  </section>
-
-  <!-- EMERGENCY CARD -->
-  <section class="card" id="emergencySection">
-    <h2><i class="fa-solid fa-id-card-clip"></i> Emergency info card</h2>
-    <p class="sub">A quick summary you can show to a doctor, caregiver, or first responder.</p>
-    <div class="emergency-card" id="emergencyCard"></div>
-    <button class="btn btn-secondary btn-sm no-print" id="printCardBtn" style="margin-top:18px;"><i class="fa-solid fa-print"></i> Print this card</button>
-  </section>
-
-</main>
-
+      
+        <!-- TRENDS & INSIGHTS -->
+        <section class="card" id="insightsSection">
+          <h2><i class="fa-solid fa-chart-line"></i> Trends &amp; insights</h2>
+          <p class="sub">Patterns from what you've logged, plus general educational notes — not a diagnosis or a prediction about you personally.</p>
+      
+          <div class="section-label">Medication adherence — last 7 days</div>
+          <div class="chart-wrap" id="adherenceChartWrap" style="height:230px;display:none;"><canvas id="adherenceChart"></canvas></div>
+          <p class="empty-note" id="adherenceEmpty">Add medicines and check them off in "Today's schedule" to see your adherence trend here.</p>
+      
+          <div class="section-label" style="margin-top:26px;">Things worth keeping an eye on</div>
+          <div id="insightCards"></div>
+      
+          <div class="disclaimer-box">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>This section shares general, population-level health education based on common medical guidance. It does not predict your future health, diagnose anything, or replace your doctor's judgment. Always discuss changes in your readings or medicines with a healthcare professional.</span>
+          </div>
+        </section>
+      
+        <!-- HEALTH TIPS -->
+        <section class="card" id="tipsSection">
+          <h2><i class="fa-solid fa-lightbulb"></i> Helpful tips for you</h2>
+          <p class="sub">General, friendly suggestions based on what you've entered. Always check with your doctor before making changes.</p>
+          <ul class="tip-list" id="tipList"></ul>
+        </section>
+      
+        <!-- EMERGENCY CARD -->
+        <section class="card" id="emergencySection">
+          <h2><i class="fa-solid fa-id-card-clip"></i> Emergency info card</h2>
+          <p class="sub">A quick summary you can show to a doctor, caregiver, or first responder.</p>
+          <div class="emergency-card" id="emergencyCard"></div>
+          <button class="btn btn-secondary btn-sm no-print" id="printCardBtn" style="margin-top:18px;"><i class="fa-solid fa-print"></i> Print this card</button>
+        </section>
+      
+      </main>
+      
 {% endblock %}
 
 {% block extra_js %}

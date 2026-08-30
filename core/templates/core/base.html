@@ -56,7 +56,12 @@
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="#">Features</a></li>
         <li><a href="{% url 'upload_prescription' %}">Security</a></li>
-        <li><a href="#" class="nav-cta">Get Started Free</a></li>
+        <!-- check later (logout) -->
+        <li><a href="#" class="nav-cta"><form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form></a></li>
+        
       </ul>
     </div>
   </nav>

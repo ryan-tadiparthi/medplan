@@ -1,0 +1,268 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+    Health Profile
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'users/css/health_profile.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="container">
+
+        <div class="card">
+
+            <div class="header">
+                <div class="logo-auth">medplan</div>
+
+                <h1 class="title">Health Profile</h1>
+
+                <p class="subtitle">
+                    Keep your health information up to date
+                </p>
+            </div>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="error">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.full_name.id_for_label }}">
+                        Full name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="full_name"
+                        id="{{ form.full_name.id_for_label }}"
+                        value="{{ form.full_name.value|default:'' }}"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                    {% if form.full_name.errors %}
+                        <div class="error">
+                            {{ form.full_name.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.age.id_for_label }}">
+                        Age
+                    </label>
+
+                    <input
+                        type="number"
+                        name="age"
+                        id="{{ form.age.id_for_label }}"
+                        value="{{ form.age.value|default:'' }}"
+                        placeholder="Enter your age"
+                        required
+                    >
+
+                    {% if form.age.errors %}
+                        <div class="error">
+                            {{ form.age.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.height.id_for_label }}">
+                        Height (cm)
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="height"
+                        id="{{ form.height.id_for_label }}"
+                        value="{{ form.height.value|default:'' }}"
+                        placeholder="Enter your height"
+                        required
+                    >
+
+                    {% if form.height.errors %}
+                        <div class="error">
+                            {{ form.height.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.weight.id_for_label }}">
+                        Weight (kg)
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="weight"
+                        id="{{ form.weight.id_for_label }}"
+                        value="{{ form.weight.value|default:'' }}"
+                        placeholder="Enter your weight"
+                        required
+                    >
+
+                    {% if form.weight.errors %}
+                        <div class="error">
+                            {{ form.weight.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.allergies.id_for_label }}">
+                        Allergies
+                    </label>
+
+                    <textarea
+                        name="allergies"
+                        id="{{ form.allergies.id_for_label }}"
+                        placeholder="List any allergies"
+                    >{{ form.allergies.value|default:'' }}</textarea>
+
+                    {% if form.allergies.errors %}
+                        <div class="error">
+                            {{ form.allergies.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.existing_conditions.id_for_label }}">
+                        Existing conditions
+                    </label>
+
+                    <textarea
+                        name="existing_conditions"
+                        id="{{ form.existing_conditions.id_for_label }}"
+                        placeholder="List any existing medical conditions"
+                    >{{ form.existing_conditions.value|default:'' }}</textarea>
+
+                    {% if form.existing_conditions.errors %}
+                        <div class="error">
+                            {{ form.existing_conditions.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.systolic.id_for_label }}">
+                        Blood pressure — Systolic (mmHg)
+                    </label>
+
+                    <input
+                        type="number"
+                        name="systolic"
+                        id="{{ form.systolic.id_for_label }}"
+                        value="{{ form.systolic.value|default:'' }}"
+                        placeholder="e.g. 120"
+                        required
+                    >
+
+                    {% if form.systolic.errors %}
+                        <div class="error">
+                            {{ form.systolic.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.diastolic.id_for_label }}">
+                        Blood pressure — Diastolic (mmHg)
+                    </label>
+
+                    <input
+                        type="number"
+                        name="diastolic"
+                        id="{{ form.diastolic.id_for_label }}"
+                        value="{{ form.diastolic.value|default:'' }}"
+                        placeholder="e.g. 80"
+                        required
+                    >
+
+                    {% if form.diastolic.errors %}
+                        <div class="error">
+                            {{ form.diastolic.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="{{ form.blood_sugar.id_for_label }}">
+                        Blood sugar (mg/dL)
+                    </label>
+
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="blood_sugar"
+                        id="{{ form.blood_sugar.id_for_label }}"
+                        value="{{ form.blood_sugar.value|default:'' }}"
+                        placeholder="Enter blood sugar"
+                        required
+                    >
+
+                    {% if form.blood_sugar.errors %}
+                        <div class="error">
+                            {{ form.blood_sugar.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <button type="submit" class="btn btn-primary">
+                    Save Health Profile
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+    <link rel="stylesheet" href="{% static 'users/css/health_profile.js' %}">
+{% endblock %}

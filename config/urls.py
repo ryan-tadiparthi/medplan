@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
-from users.views import register
+from users.views import register, health_profile
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -37,6 +37,8 @@ urlpatterns = [
         auth_views.LogoutView.as_view(),
         name='logout'
     ),
+
+    path('health-profile/', health_profile, name='health_profile'),
 ]
 
 
