@@ -169,3 +169,6 @@ table.data-table tr.side-effect-row td{border-bottom:1px solid var(--line);backg
   .card{padding:20px;}
   .cal-cell{min-height:52px;}
 }
+
+#medTable.has-data{margin-bottom:28px;}
+table.data-table{width:100%;border-collapse:collapse;margin-bottom:24px;}table.data-table{width:100%;border-collapse:collapse;margin-bottom:24px;} 

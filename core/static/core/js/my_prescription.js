@@ -895,3 +895,6 @@
   init();
 
 })();
+
+var tableEl = document.querySelector('#medTable');
+tableEl.classList.toggle('has-data', state.medications.length > 0);
