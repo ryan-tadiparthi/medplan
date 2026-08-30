@@ -8,40 +8,6 @@
   var vitalsChartInstance = null;
   var adherenceChartInstance = null;
   var currentMetric = 'weight';
-  var openInfoIds = {};
-  var notifiedKeys = {};
-
-  /* General, commonly-known side effects for widely used medicines.
-     Informational only — not exhaustive, not dosage-specific, not medical advice. */
-  var SIDE_EFFECTS = {
-    'metformin': ['Nausea or upset stomach', 'Diarrhea, especially when starting', 'Metallic taste', 'Usually improves by taking with food'],
-    'lisinopril': ['Dry, tickly cough', 'Dizziness, especially when standing up', 'Headache'],
-    'atorvastatin': ['Muscle aches', 'Digestive upset', 'Rarely, liver enzyme changes checked by blood tests'],
-    'simvastatin': ['Muscle aches', 'Digestive upset', 'Headache'],
-    'amlodipine': ['Ankle or leg swelling', 'Flushing', 'Headache', 'Dizziness'],
-    'levothyroxine': ['Usually well tolerated at the right dose', 'Too high a dose can cause a racing heart, jitteriness, or trouble sleeping'],
-    'aspirin': ['Stomach irritation or heartburn', 'Increased bruising or bleeding', 'Take with food to reduce stomach upset'],
-    'ibuprofen': ['Stomach upset', 'Increased blood pressure with regular use', 'Fluid retention', 'Avoid long-term use without medical advice'],
-    'paracetamol': ['Generally well tolerated at recommended doses', 'Avoid exceeding the daily limit, especially with alcohol'],
-    'acetaminophen': ['Generally well tolerated at recommended doses', 'Avoid exceeding the daily limit, especially with alcohol'],
-    'omeprazole': ['Headache', 'Stomach pain or diarrhea', 'Long-term use sometimes linked to lower vitamin B12 or magnesium'],
-    'metoprolol': ['Fatigue', 'Cold hands or feet', 'Slowed heart rate', 'Dizziness'],
-    'losartan': ['Dizziness', 'Higher potassium levels, monitored by blood tests', 'Usually fewer cough issues than lisinopril-type drugs'],
-    'hydrochlorothiazide': ['Increased urination', 'Low potassium', 'Dizziness', 'Sun sensitivity'],
-    'warfarin': ['Increased bleeding or bruising risk', 'Requires regular blood tests to monitor levels', 'Many food and drug interactions'],
-    'insulin': ['Low blood sugar (shakiness, sweating, confusion)', 'Weight gain', 'Injection site reactions'],
-    'sertraline': ['Nausea, especially at first', 'Sleep changes', 'Sexual side effects', 'Usually settles after a few weeks'],
-    'escitalopram': ['Nausea', 'Sleep changes', 'Sexual side effects'],
-    'alprazolam': ['Drowsiness', 'Dizziness', 'Dependency risk with regular use', 'Avoid alcohol'],
-    'prednisone': ['Increased appetite and weight gain', 'Mood changes', 'Trouble sleeping', 'Raised blood sugar'],
-    'albuterol': ['Jitteriness or shakiness', 'Fast heartbeat', 'Headache'],
-    'azithromycin': ['Nausea or stomach upset', 'Diarrhea', 'Finish the full course as prescribed'],
-    'amoxicillin': ['Stomach upset', 'Diarrhea', 'Allergic rash in some people'],
-    'gabapentin': ['Drowsiness', 'Dizziness', 'Coordination changes'],
-    'tramadol': ['Drowsiness', 'Nausea', 'Dizziness', 'Constipation'],
-    'furosemide': ['Increased urination', 'Low potassium', 'Dizziness from fluid loss'],
-    'clopidogrel': ['Increased bruising or bleeding', 'Stomach upset']
-  };
 
   function pad(n){ return n<10 ? '0'+n : ''+n; }
   function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
@@ -51,6 +17,23 @@
     return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
   }
   function uid(){ return Math.random().toString(36).slice(2,10); }
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : s;
+    return d.innerHTML;
+  }
+
+  function allDosesFlat(){
+    var doses = [];
+    state.medications.forEach(function(m){
+      m.times.forEach(function(t){
+        doses.push({ medId:m.id, name:m.name, dosage:m.dosage, time:t });
+      });
+    });
+    doses.sort(function(a,b){ return a.time.localeCompare(b.time); });
+    return doses;
+  }
 
   async function loadAll(){
     for (var i=0;i<STORAGE_KEYS.length;i++){
@@ -179,238 +162,6 @@
         scales:{ y:{ ticks:{ font:{ size:14 } } }, x:{ ticks:{ font:{ size:13 } } } }
       }
     });
-  }
-
-  /* ---------------- MEDICATIONS ---------------- */
-
-  function findSideEffects(medName){
-    var n = (medName||'').toLowerCase().trim();
-    if (!n) return null;
-    for (var key in SIDE_EFFECTS){
-      if (n.indexOf(key) >= 0 || key.indexOf(n) >= 0){
-        return { key:key, effects: SIDE_EFFECTS[key] };
-      }
-    }
-    return null;
-  }
-
-  function renderMedTable(){
-    var tbody = document.querySelector('#medTable tbody');
-    if (state.medications.length === 0){
-      tbody.innerHTML = '<tr><td colspan="7" class="empty-note">No medicines added yet.</td></tr>';
-    } else {
-      var rows = '';
-      state.medications.forEach(function(m){
-        var times = m.times.map(function(t){ return '<span class="pill">'+t+'</span>'; }).join('');
-        var remindOn = !!m.remindEnabled;
-        rows += '<tr>' +
-          '<td>'+escapeHtml(m.name)+'</td>' +
-          '<td>'+escapeHtml(m.dosage||'—')+'</td>' +
-          '<td>'+times+'</td>' +
-          '<td>'+escapeHtml(m.notes||'—')+'</td>' +
-          '<td><button class="bell-toggle'+(remindOn?' on':'')+'" data-toggle-remind="'+m.id+'" title="'+(remindOn?'Reminders on':'Reminders off')+'"><i class="fa-solid fa-bell'+(remindOn?'':'-slash')+'"></i></button></td>' +
-          '<td><button class="btn-ghost" data-toggle-info="'+m.id+'"><i class="fa-solid fa-circle-info"></i> Info</button></td>' +
-          '<td><button class="btn btn-danger btn-sm" data-remove-med="'+m.id+'"><i class="fa-solid fa-trash"></i></button></td>' +
-        '</tr>';
-        if (openInfoIds[m.id]){
-          var found = findSideEffects(m.name);
-          var text;
-          if (found){
-            text = '<strong>Commonly reported with medicines like '+escapeHtml(m.name)+':</strong> '+found.effects.map(escapeHtml).join(' · ');
-          } else {
-            text = 'No general reference info on file for "'+escapeHtml(m.name)+'". Ask your pharmacist or check the leaflet that came with it for possible side effects.';
-          }
-          rows += '<tr class="side-effect-row"><td colspan="7">'+text+' <span style="display:block;margin-top:6px;font-style:italic;">General information only, not exhaustive and not personalized — always confirm with your pharmacist or doctor.</span></td></tr>';
-        }
-      });
-      tbody.innerHTML = rows;
-    }
-    renderTodaySchedule();
-    renderCalendar();
-    renderGlance();
-    renderEmergencyCard();
-    renderInsights();
-  }
-
-  function escapeHtml(s){
-    var d = document.createElement('div');
-    d.textContent = s == null ? '' : s;
-    return d.innerHTML;
-  }
-
-  function allDosesFlat(){
-    var doses = [];
-    state.medications.forEach(function(m){
-      m.times.forEach(function(t){
-        doses.push({ medId:m.id, name:m.name, dosage:m.dosage, time:t });
-      });
-    });
-    doses.sort(function(a,b){ return a.time.localeCompare(b.time); });
-    return doses;
-  }
-
-  function renderTodaySchedule(){
-    var wrap = document.getElementById('todaySchedule');
-    var doses = allDosesFlat();
-    if (doses.length === 0){
-      wrap.innerHTML = '<p class="empty-note">Add a medicine below to see today\'s schedule here.</p>';
-      renderReminderBanner();
-      return;
-    }
-    var today = todayStr();
-    var taken = state.takenLog[today] || [];
-    wrap.innerHTML = doses.map(function(d){
-      var doseKey = d.medId + '_' + d.time;
-      var isTaken = taken.indexOf(doseKey) >= 0;
-      return '<div class="day-list-item"><label style="display:flex;align-items:center;gap:12px;cursor:pointer;">' +
-        '<input type="checkbox" data-dose-key="'+doseKey+'" '+(isTaken?'checked':'')+' style="width:20px;height:20px;">' +
-        '<span style="'+(isTaken?'text-decoration:line-through;color:var(--ink-soft);':'')+'"><strong>'+d.time+'</strong> — '+escapeHtml(d.name)+' ('+escapeHtml(d.dosage||'—')+')</span>' +
-        '</label></div>';
-    }).join('');
-    renderReminderBanner();
-  }
-
-  function toggleDoseTaken(doseKey){
-    var today = todayStr();
-    if (!state.takenLog[today]) state.takenLog[today] = [];
-    var idx = state.takenLog[today].indexOf(doseKey);
-    if (idx >= 0) state.takenLog[today].splice(idx,1);
-    else state.takenLog[today].push(doseKey);
-    saveKey('takenLog');
-    renderTodaySchedule();
-    renderInsights();
-  }
-
-  function saveMedication(){
-    var name = document.getElementById('mName').value.trim();
-    var dosage = document.getElementById('mDosage').value.trim();
-    var timesRaw = document.getElementById('mTimes').value.trim();
-    var notes = document.getElementById('mNotes').value.trim();
-    var remindEnabled = document.getElementById('mRemind').checked;
-    var remindMinutes = parseInt(document.getElementById('mRemindMins').value) || 0;
-    var errEl = document.getElementById('medError');
-
-    var times = timesRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
-
-    if (!name || times.length === 0){
-      errEl.style.display = 'block';
-      return;
-    }
-    errEl.style.display = 'none';
-
-    state.medications.push({ id:uid(), name:name, dosage:dosage, times:times, notes:notes, remindEnabled:remindEnabled, remindMinutes:remindMinutes });
-    saveKey('medications');
-
-    document.getElementById('mName').value = '';
-    document.getElementById('mDosage').value = '';
-    document.getElementById('mTimes').value = '';
-    document.getElementById('mNotes').value = '';
-    document.getElementById('mRemindMins').value = '0';
-    document.getElementById('mRemind').checked = true;
-    document.getElementById('addMedForm').style.display = 'none';
-
-    renderMedTable();
-  }
-
-  function removeMedication(id){
-    state.medications = state.medications.filter(function(m){ return m.id !== id; });
-    delete openInfoIds[id];
-    saveKey('medications');
-    renderMedTable();
-  }
-
-  function toggleReminder(id){
-    var med = state.medications.find(function(m){ return m.id === id; });
-    if (!med) return;
-    med.remindEnabled = !med.remindEnabled;
-    saveKey('medications');
-    renderMedTable();
-  }
-
-  function toggleInfo(id){
-    openInfoIds[id] = !openInfoIds[id];
-    renderMedTable();
-  }
-
-  /* ---------------- REMINDERS ---------------- */
-
-  function updateNotifStatus(){
-    var el = document.getElementById('notifStatus');
-    if (!('Notification' in window)){
-      el.textContent = 'Notifications are not supported in this browser.';
-    } else if (Notification.permission === 'granted'){
-      el.textContent = 'Notifications are on.';
-    } else if (Notification.permission === 'denied'){
-      el.textContent = 'Notifications are blocked — enable them in your browser settings.';
-    } else {
-      el.textContent = 'Notifications are off — click to enable.';
-    }
-  }
-
-  function enableNotifications(){
-    if (!('Notification' in window)){
-      updateNotifStatus();
-      return;
-    }
-    Notification.requestPermission().then(function(){ updateNotifStatus(); });
-  }
-
-  function renderReminderBanner(){
-    var wrap = document.getElementById('reminderBanner');
-    var now = new Date();
-    var nowMinutes = now.getHours()*60 + now.getMinutes();
-    var today = todayStr();
-    var taken = state.takenLog[today] || [];
-
-    var upcoming = [];
-    state.medications.forEach(function(m){
-      if (!m.remindEnabled) return;
-      m.times.forEach(function(t){
-        var parts = t.split(':');
-        if (parts.length < 2) return;
-        var doseMinutes = parseInt(parts[0])*60 + parseInt(parts[1]);
-        var diff = doseMinutes - nowMinutes;
-        var doseKey = m.id+'_'+t;
-        if (diff >= -15 && diff <= 60 && taken.indexOf(doseKey) < 0){
-          upcoming.push({ name:m.name, dosage:m.dosage, time:t, diff:diff });
-        }
-      });
-    });
-
-    if (upcoming.length === 0){
-      wrap.innerHTML = '';
-      return;
-    }
-    upcoming.sort(function(a,b){ return a.diff - b.diff; });
-    var items = upcoming.map(function(u){
-      var when = u.diff < 0 ? 'now (a little overdue)' : (u.diff === 0 ? 'right now' : 'in about '+u.diff+' min');
-      return '<div class="rb-item"><i class="fa-solid fa-clock"></i> '+escapeHtml(u.name)+' ('+escapeHtml(u.dosage||'—')+') at '+u.time+' — '+when+'</div>';
-    }).join('');
-    wrap.innerHTML = '<div class="reminder-banner"><div class="rb-title"><i class="fa-solid fa-bell"></i> Upcoming doses</div>'+items+'</div>';
-  }
-
-  function checkReminders(){
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    var now = new Date();
-    var nowMinutes = now.getHours()*60 + now.getMinutes();
-    var today = todayStr();
-    state.medications.forEach(function(m){
-      if (!m.remindEnabled) return;
-      m.times.forEach(function(t){
-        var parts = t.split(':');
-        if (parts.length < 2) return;
-        var doseMinutes = parseInt(parts[0])*60 + parseInt(parts[1]);
-        var remindAt = doseMinutes - (m.remindMinutes || 0);
-        var key = m.id+'_'+t+'_'+today;
-        if (nowMinutes === remindAt && !notifiedKeys[key]){
-          notifiedKeys[key] = true;
-          try{
-            new Notification('Medication reminder', { body: m.name+' ('+(m.dosage||'—')+') at '+t, icon:'' });
-          }catch(e){ /* ignore */ }
-        }
-      });
-    });
-    renderReminderBanner();
   }
 
   /* ---------------- CALENDAR ---------------- */
@@ -831,24 +582,6 @@
     if (btn) renderChart(btn.dataset.metric);
   });
 
-  document.getElementById('addMedToggle').addEventListener('click', function(){
-    var f = document.getElementById('addMedForm');
-    f.style.display = f.style.display === 'none' ? 'block' : 'none';
-  });
-  document.getElementById('saveMedBtn').addEventListener('click', saveMedication);
-  document.querySelector('#medTable tbody').addEventListener('click', function(e){
-    var removeBtn = e.target.closest('[data-remove-med]');
-    if (removeBtn){ removeMedication(removeBtn.getAttribute('data-remove-med')); return; }
-    var remindBtn = e.target.closest('[data-toggle-remind]');
-    if (remindBtn){ toggleReminder(remindBtn.getAttribute('data-toggle-remind')); return; }
-    var infoBtn = e.target.closest('[data-toggle-info]');
-    if (infoBtn){ toggleInfo(infoBtn.getAttribute('data-toggle-info')); return; }
-  });
-  document.getElementById('todaySchedule').addEventListener('change', function(e){
-    if (e.target.matches('[data-dose-key]')) toggleDoseTaken(e.target.getAttribute('data-dose-key'));
-  });
-  document.getElementById('enableNotifBtn').addEventListener('click', enableNotifications);
-
   document.getElementById('calPrev').addEventListener('click', function(){ calDate.setMonth(calDate.getMonth()-1); renderCalendar(); });
   document.getElementById('calNext').addEventListener('click', function(){ calDate.setMonth(calDate.getMonth()+1); renderCalendar(); });
   document.getElementById('calGrid').addEventListener('click', function(e){
@@ -880,21 +613,14 @@
     await loadAll();
     applySize();
     renderProfile();
-    renderMedTable();
     renderGuardians();
     renderVitals();
     renderTips();
     renderGlance();
     renderEmergencyCard();
     renderInsights();
-    updateNotifStatus();
-    setInterval(checkReminders, 30000);
-    setInterval(renderReminderBanner, 60000);
   }
 
   init();
 
 })();
-
-var tableEl = document.querySelector('#medTable');
-tableEl.classList.toggle('has-data', state.medications.length > 0);

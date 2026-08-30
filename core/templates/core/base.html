@@ -24,24 +24,24 @@
       <div class="lang-select">
         <i class="fa-solid fa-globe"></i>
         <select id="customLanguageSelect">
-      <option value="en">English</option>
-      <option value="hi">हिंदी</option>
-      <option value="ne">नेपाली</option>
-      <option value="ta">தமிழ்</option>
-      <option value="te">తెలుగు</option>
-      <option value="kn">ಕನ್ನಡ</option>
-      <option value="ml">മലയാളം</option>
-      <option value="bn">বাংলা</option>
-      <option value="mr">मराठी</option>
-      <option value="gu">ગુજરાતી</option>
-      <option value="pa">ਪੰਜਾਬੀ</option>
-      <option value="or">ଓଡ଼ିଆ</option>
-      <option value="as">অসমীয়া</option>
-      <option value="ur">اردو</option>
-      <option value="fr">Français</option>
-      <option value="es">Español</option>
-    </select>
-  </div>
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+          <option value="ne">नेपाली</option>
+          <option value="ta">தமிழ்</option>
+          <option value="te">తెలుగు</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="ml">മലയാളം</option>
+          <option value="bn">বাংলা</option>
+          <option value="mr">मराठी</option>
+          <option value="gu">ગુજરાતી</option>
+          <option value="pa">ਪੰਜਾਬੀ</option>
+          <option value="or">ଓଡ଼ିଆ</option>
+          <option value="as">অসমীয়া</option>
+          <option value="ur">اردو</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
 
       <div class="top-actions">
         <a href="{% url 'login' %}" class="login-link">Log in</a>
@@ -55,49 +55,38 @@
 
   <nav>
     <div class="wrap nav-content">
-  <a href="{% url 'home' %}" class="logo">
-    <span class="logo-mark">
-      <img src="{% static 'images/logo.png' %}" alt="MedPlan logo" class="logo-img">
-    </span>
-    <span class="logo-word">Med<span>Plan</span></span>
-</a>
+      <a href="{% url 'home' %}" class="logo">
+        <span class="logo-mark"><i class="fa-solid fa-file-medical"></i></span>
+        <span class="logo-word">Med<span>Plan</span></span>
+      </a>
 
       <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu">
         <span></span><span></span><span></span>
       </button>
 
       <ul class="nav-links" id="navLinks">
-        <ul class="nav-links" id="navLinks">
-
-            <li>
-                <a href="{% url 'home' %}">Home</a>
-            </li>
-        
-            <li>
-                <a href="#">Features</a>
-            </li>
-        
-            <li>
-                <a href="{% url 'upload_prescription' %}">Upload</a>
-            </li>
-        
-            <li>
-                <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="nav-cta">Logout</button>
-                </form>
-            </li>
-        
-        </ul>
+        <li>
+          <a href="{% url 'home' %}">Home</a>
+        </li>
+        <li>
+          <a href="#">Features</a>
+        </li>
+        <li>
+          <a href="{% url 'upload_prescription' %}">Upload</a>
+        </li>
+        <li>
+          <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="nav-cta">Logout</button>
+          </form>
+        </li>
       </ul>
     </div>
   </nav>
-  
 
+  {% block content %}
+  {% endblock %}
 
-        {% block content %}
-        {% endblock %}
-    
   <footer class="footer-section">
     <div class="wrap">
       <div class="footer-content">
@@ -150,13 +139,10 @@
       </div>
     </div>
   </footer>
-		
 
-    {% block extra_js %}
-    {% endblock %}
-    
+  {% block extra_js %}
+  {% endblock %}
 
-    <script src="{% static 'js/global.js' %}"></script>
-   
+  <script src="{% static 'js/global.js' %}"></script>
 </body>
 </html>
