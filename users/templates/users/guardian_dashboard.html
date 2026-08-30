@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+    Guardian Dashboard
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'users/css/guardian_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="container">
+
+        <h1>Guardian Dashboard</h1>
+
+        <p>
+            Welcome, {{ request.user.username }}!
+        </p>
+
+        <p>
+            You are logged in as a Guardian.
+        </p>
+
+    </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+    <link rel="stylesheet" href="{% static 'users/css/guardian_dashboard.js' %}">
+{% endblock %}

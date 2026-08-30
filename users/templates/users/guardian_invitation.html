@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}
+    Invite Guardian
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'users/css/guardian_invitation.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<main>
+    <div class="container">
+
+        <div class="card">
+
+            <h1>Invite a Guardian</h1>
+
+            <p>
+                Enter the details of the person you would like to invite
+                as your guardian.
+            </p>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-primary">
+                    Send Invitation
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+    <link rel="stylesheet" href="{% static 'users/css/guardian_invitation.js' %}">
+{% endblock %}

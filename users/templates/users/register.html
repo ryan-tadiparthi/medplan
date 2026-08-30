@@ -22,136 +22,236 @@
     
 
     <!-- Main Auth Form -->
-    <main>
-        <div class="container">
-            <div class="card">
-                <div class="header">
-                    <div class="logo-auth">medplan</div>
-                    <h1 class="title">Create account</h1>
-                    <p class="subtitle">Join medplan today</p>
+    
+<main>
+    <div class="container">
+        <div class="card">
+
+            <div class="header">
+                <div class="logo-auth">medplan</div>
+
+                <h1 class="title">
+                    Create account
+                </h1>
+
+                <p class="subtitle">
+                    Join medplan today
+                </p>
+            </div>
+
+
+            <form method="POST" action="{% url 'register' %}">
+
+                {% csrf_token %}
+
+
+                <!-- Username -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        id="{{ form.username.id_for_label }}"
+                        placeholder="Choose a username"
+                        value="{{ form.username.value|default:'' }}"
+                        required
+                    >
+
+                    {% if form.username.errors %}
+
+                        <div class="error">
+                            {{ form.username.errors }}
+                        </div>
+
+                    {% endif %}
+
                 </div>
 
-                <form method="POST" action="{% url 'register' %}">
-                    {% csrf_token %}
-                
-                    <div class="form-group">
-                        <label for="{{ form.username.id_for_label }}">Username</label>
-                
-                        <input
-                            type="text"
-                            name="username"
-                            id="{{ form.username.id_for_label }}"
-                            placeholder="Choose a username"
-                            required
-                        >
-                
-                        {% if form.username.errors %}
-                            <div class="error">
-                                {{ form.username.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
 
-                    
-                    <div class="form-group">
+                <!-- Email -->
 
-                        <label for="{{ form.email.id_for_label }}">Email</label>
+                <div class="form-group">
 
-                        <input
+                    <label for="{{ form.email.id_for_label }}">
+                        Email
+                    </label>
 
-                            type="email"
+                    <input
+                        type="email"
+                        name="email"
+                        id="{{ form.email.id_for_label }}"
+                        placeholder="Enter your email"
+                        value="{{ form.email.value|default:'' }}"
+                        required
+                    >
 
-                            name="email"
+                    {% if form.email.errors %}
 
-                            id="{{ form.email.id_for_label }}"
-
-                            placeholder="Enter your email"
-
-                            required
-
-                        >
-
-                        {% if form.email.errors %}
-
-                            <div class="error">
-
-                                {{ form.email.errors }}
-
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-
-                
-                
-                    <div class="form-group">
-                        <label for="{{ form.password1.id_for_label }}">Password</label>
-                
-                        <input
-                            type="password"
-                            name="password1"
-                            id="{{ form.password1.id_for_label }}"
-                            placeholder="Create a password"
-                            required
-                        >
-                
-                        {% if form.password1.errors %}
-                            <div class="error">
-                                {{ form.password1.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                
-                
-                    <div class="form-group">
-                        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
-                
-                        <input
-                            type="password"
-                            name="password2"
-                            id="{{ form.password2.id_for_label }}"
-                            placeholder="Re-enter your password"
-                            required
-                        >
-                
-                        {% if form.password2.errors %}
-                            <div class="error">
-                                {{ form.password2.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                
-                
-                    {% if form.non_field_errors %}
                         <div class="error">
-                            {{ form.non_field_errors }}
+                            {{ form.email.errors }}
                         </div>
+
                     {% endif %}
-                
-                
-                    <button type="submit" class="btn btn-primary">
-                        Create account
-                    </button>
-                
-                
-                    <a href="{% url 'login' %}"
-                       class="btn btn-secondary"
-                       style="display: flex; align-items: center; justify-content: center;">
-                        Back to login
-                    </a>
-                
-                
-                    <div class="toggle-auth">
-                        Already have an account?
-                        <a href="{% url 'login' %}">Sign in</a>
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.password1.id_for_label }}">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password1"
+                        id="{{ form.password1.id_for_label }}"
+                        placeholder="Create a password"
+                        required
+                    >
+
+                    {% if form.password1.errors %}
+
+                        <div class="error">
+                            {{ form.password1.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Confirm Password -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.password2.id_for_label }}">
+                        Confirm password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password2"
+                        id="{{ form.password2.id_for_label }}"
+                        placeholder="Re-enter your password"
+                        required
+                    >
+
+                    {% if form.password2.errors %}
+
+                        <div class="error">
+                            {{ form.password2.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Account Type -->
+
+                <div class="form-group">
+
+                    <label>
+                        Account type
+                    </label>
+
+                    <div class="role-options">
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="role"
+                                value="patient"
+                                {% if form.role.value == "patient" %}
+                                    checked
+                                {% endif %}
+                                required
+                            >
+                            Patient
+                        </label>
+
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="role"
+                                value="guardian"
+                                {% if form.role.value == "guardian" %}
+                                    checked
+                                {% endif %}
+                            >
+                            Guardian
+                        </label>
+
                     </div>
-                
-                </form>
-            </div>
+
+
+                    {% if form.role.errors %}
+
+                        <div class="error">
+                            {{ form.role.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- General form errors -->
+
+                {% if form.non_field_errors %}
+
+                    <div class="error">
+                        {{ form.non_field_errors }}
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Submit -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Create account
+                </button>
+
+
+                <!-- Back to login -->
+
+                <a
+                    href="{% url 'login' %}"
+                    class="btn btn-secondary"
+                    style="display: flex; align-items: center; justify-content: center;"
+                >
+                    Back to login
+                </a>
+
+
+                <div class="toggle-auth">
+
+                    Already have an account?
+
+                    <a href="{% url 'login' %}">
+                        Sign in
+                    </a>
+
+                </div>
+
+            </form>
+
         </div>
-    </main>
+    </div>
+</main>
 
    
 {% endblock %}
